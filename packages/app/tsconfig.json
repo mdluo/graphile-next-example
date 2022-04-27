@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "."
+  },
+  "exclude": [
+    ".next"
+  ],
+  "include": [
+    "next-env.d.ts",
+  ]
+}

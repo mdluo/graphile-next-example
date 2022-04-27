@@ -1,0 +1,12 @@
+overwrite: true
+schema: ../server/data/schema.graphql
+documents:
+  - 'graphql/*.graphql'
+generates:
+  types/generated/graphql.tsx:
+    plugins:
+      - add:
+          content: '/* eslint-disable prettier/prettier */'
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
