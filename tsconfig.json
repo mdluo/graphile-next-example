@@ -31,12 +31,13 @@
   },
   "exclude": [
     "node_modules",
-    "packages/*/node_modules"
+    ".next"
   ],
   "include": [
     "**/*.js",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "next-env.d.ts",
   ],
   "ts-node": {
     "transpileOnly": true,

@@ -1,13 +1,15 @@
 import type { AppProps } from 'next/app';
+import { SessionProvider } from 'next-auth/react';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import { relayStylePagination } from '@apollo/client/utilities';
+// import { relayStylePagination } from '@apollo/client/utilities';
 import { FocusStyleManager } from '@blueprintjs/core';
 
 import 'styles/globals.css';
 
 const apolloClient = new ApolloClient({
-  uri: 'http://localhost:5000/graphql',
+  uri: '/graphql',
   cache: new InMemoryCache({
+    /*
     typePolicies: {
       Query: {
         fields: {
@@ -15,15 +17,21 @@ const apolloClient = new ApolloClient({
         },
       },
     },
+    */
   }),
 });
 
-const App: React.FC<AppProps> = ({ Component, pageProps }) => {
+const App: React.FC<AppProps> = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}) => {
   FocusStyleManager.onlyShowFocusOnTabs();
   return (
-    <ApolloProvider client={apolloClient}>
-      <Component {...pageProps} />
-    </ApolloProvider>
+    <SessionProvider session={session}>
+      <ApolloProvider client={apolloClient}>
+        <Component {...pageProps} />
+      </ApolloProvider>
+    </SessionProvider>
   );
 };
 
