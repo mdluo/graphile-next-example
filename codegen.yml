@@ -1,9 +1,9 @@
 overwrite: true
-schema: data/schema.graphql
+schema: server/data/schema.graphql
 documents:
   - 'graphql/*.graphql'
 generates:
-  graphql/graphql.tsx:
+  graphql/generated/index.tsx:
     plugins:
       - add:
           content: '/* eslint-disable prettier/prettier */'

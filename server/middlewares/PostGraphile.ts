@@ -63,10 +63,11 @@ const middleware = postgraphql(authPgPool, 'app_public', {
       token: cookies['next-auth.session-token'],
       secret: process.env.NEXTAUTH_SECRET || '',
     });
+    const userId = (payload as { user: { id: string } })?.user?.id ?? '';
     return {
       // Everyone uses the "visitor" role currently
       role: DB_VISITOR,
-      'jwt.claims.user_id': (payload?.user_id as string) ?? '',
+      'jwt.claims.user_id': userId,
     };
   },
   allowExplain: isDev,

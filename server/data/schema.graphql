@@ -1,5 +1,39 @@
 """The root query type which gives access points into the data universe."""
 type Query {
+  """Reads and enables pagination through a set of `Account`."""
+  accounts(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Account`."""
+    orderBy: [AccountsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AccountCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AccountFilter
+  ): AccountsConnection
+
   """Reads and enables pagination through a set of `Tweet`."""
   tweets(
     """Only read the first `n` values of the set."""
@@ -67,43 +101,59 @@ type Query {
     """
     filter: UserFilter
   ): UsersConnection
+  account(id: UUID!): Account
   tweet(id: UUID!): Tweet
   user(id: UUID!): User
   userByUsername(username: String!): User
+
+  """The currently logged in user (or null if not logged in)."""
+  currentUser: User
+
+  """
+  Handy method to get the current user ID for use in RLS policies, etc; in GraphQL, use `currentUser{id}` instead.
+  """
+  currentUserId: UUID
 }
 
-"""A connection to a list of `Tweet` values."""
-type TweetsConnection {
-  """A list of `Tweet` objects."""
-  nodes: [Tweet!]!
+"""A connection to a list of `Account` values."""
+type AccountsConnection {
+  """A list of `Account` objects."""
+  nodes: [Account!]!
 
   """
-  A list of edges which contains the `Tweet` and cursor to aid in pagination.
+  A list of edges which contains the `Account` and cursor to aid in pagination.
   """
-  edges: [TweetsEdge!]!
+  edges: [AccountsEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """The count of *all* `Tweet` you could get from the connection."""
+  """The count of *all* `Account` you could get from the connection."""
   totalCount: Int!
 }
 
-type Tweet {
+type Account {
   id: UUID!
-  authorId: UUID!
-  text: String!
+  userId: UUID!
+  provider: String!
+  providerAccountId: String!
+  accountDetails: JSON!
   createdAt: Datetime!
   updatedAt: Datetime!
 
-  """Reads a single `User` that is related to this `Tweet`."""
-  author: User
+  """Reads a single `User` that is related to this `Account`."""
+  user: User
 }
 
 """
 A universally unique identifier as defined by [RFC 4122](https://tools.ietf.org/html/rfc4122).
 """
 scalar UUID
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
 """
 A point in time as described by the [ISO
@@ -116,9 +166,46 @@ type User {
   id: UUID!
 
   """Unique name."""
-  username: String!
+  username: String
   name: String
+  image: String
   description: String
+  createdAt: Datetime!
+  updatedAt: Datetime!
+
+  """Reads and enables pagination through a set of `Account`."""
+  accounts(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Account`."""
+    orderBy: [AccountsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AccountCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AccountFilter
+  ): AccountsConnection!
 
   """Reads and enables pagination through a set of `Tweet`."""
   authoredTweets(
@@ -157,6 +244,142 @@ type User {
 
 """A location in a connection that can be used for resuming pagination."""
 scalar Cursor
+
+"""Methods to use when ordering `Account`."""
+enum AccountsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `Account` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input AccountCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+"""
+A filter to be used against `Account` object types. All fields are combined with a logical ‘and.’
+"""
+input AccountFilter {
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
+
+  """Checks for all expressions in this list."""
+  and: [AccountFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [AccountFilter!]
+
+  """Negates the expression."""
+  not: AccountFilter
+}
+
+"""
+A filter to be used against UUID fields. All fields are combined with a logical ‘and.’
+"""
+input UUIDFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: UUID
+
+  """Not equal to the specified value."""
+  notEqualTo: UUID
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: UUID
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: UUID
+
+  """Included in the specified list."""
+  in: [UUID!]
+
+  """Not included in the specified list."""
+  notIn: [UUID!]
+
+  """Less than the specified value."""
+  lessThan: UUID
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: UUID
+
+  """Greater than the specified value."""
+  greaterThan: UUID
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: UUID
+}
+
+"""A connection to a list of `Tweet` values."""
+type TweetsConnection {
+  """A list of `Tweet` objects."""
+  nodes: [Tweet!]!
+
+  """
+  A list of edges which contains the `Tweet` and cursor to aid in pagination.
+  """
+  edges: [TweetsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Tweet` you could get from the connection."""
+  totalCount: Int!
+}
+
+type Tweet {
+  id: UUID!
+  authorId: UUID!
+  text: String!
+  createdAt: Datetime!
+  updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `Tweet`."""
+  author: User
+}
+
+"""A `Tweet` edge in the connection."""
+type TweetsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Tweet` at the end of the edge."""
+  node: Tweet!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: Cursor
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: Cursor
+}
 
 """Methods to use when ordering `Tweet`."""
 enum TweetsOrderBy {
@@ -209,48 +432,6 @@ input TweetFilter {
 }
 
 """
-A filter to be used against UUID fields. All fields are combined with a logical ‘and.’
-"""
-input UUIDFilter {
-  """
-  Is null (if `true` is specified) or is not null (if `false` is specified).
-  """
-  isNull: Boolean
-
-  """Equal to the specified value."""
-  equalTo: UUID
-
-  """Not equal to the specified value."""
-  notEqualTo: UUID
-
-  """
-  Not equal to the specified value, treating null like an ordinary value.
-  """
-  distinctFrom: UUID
-
-  """Equal to the specified value, treating null like an ordinary value."""
-  notDistinctFrom: UUID
-
-  """Included in the specified list."""
-  in: [UUID!]
-
-  """Not included in the specified list."""
-  notIn: [UUID!]
-
-  """Less than the specified value."""
-  lessThan: UUID
-
-  """Less than or equal to the specified value."""
-  lessThanOrEqualTo: UUID
-
-  """Greater than the specified value."""
-  greaterThan: UUID
-
-  """Greater than or equal to the specified value."""
-  greaterThanOrEqualTo: UUID
-}
-
-"""
 A filter to be used against Datetime fields. All fields are combined with a logical ‘and.’
 """
 input DatetimeFilter {
@@ -292,28 +473,13 @@ input DatetimeFilter {
   greaterThanOrEqualTo: Datetime
 }
 
-"""A `Tweet` edge in the connection."""
-type TweetsEdge {
+"""A `Account` edge in the connection."""
+type AccountsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `Tweet` at the end of the edge."""
-  node: Tweet!
-}
-
-"""Information about pagination in a connection."""
-type PageInfo {
-  """When paginating forwards, are there more items?"""
-  hasNextPage: Boolean!
-
-  """When paginating backwards, are there more items?"""
-  hasPreviousPage: Boolean!
-
-  """When paginating backwards, the cursor to continue."""
-  startCursor: Cursor
-
-  """When paginating forwards, the cursor to continue."""
-  endCursor: Cursor
+  """The `Account` at the end of the edge."""
+  node: Account!
 }
 
 """A connection to a list of `User` values."""
@@ -438,14 +604,6 @@ type Mutation {
     input: CreateTweetInput!
   ): CreateTweetPayload
 
-  """Creates a single `User`."""
-  createUser(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateUserInput!
-  ): CreateUserPayload
-
   """Updates a single `User` using a unique key and a patch."""
   updateUser(
     """
@@ -453,6 +611,22 @@ type Mutation {
     """
     input: UpdateUserInput!
   ): UpdateUserPayload
+
+  """Deletes a single `Account` using a unique key."""
+  deleteAccount(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteAccountInput!
+  ): DeleteAccountPayload
+
+  """Deletes a single `Tweet` using a unique key."""
+  deleteTweet(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteTweetInput!
+  ): DeleteTweetPayload
 }
 
 """The output of our create `Tweet` mutation."""
@@ -496,49 +670,6 @@ input CreateTweetInput {
 """An input for mutations affecting `Tweet`"""
 input TweetInput {
   text: String!
-}
-
-"""The output of our create `User` mutation."""
-type CreateUserPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `User` that was created by this mutation."""
-  user: User
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """An edge for our `User`. May be used by Relay 1."""
-  userEdge(
-    """The method to use when ordering `User`."""
-    orderBy: [UsersOrderBy!] = [PRIMARY_KEY_ASC]
-  ): UsersEdge
-}
-
-"""All input for the create `User` mutation."""
-input CreateUserInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `User` to be created by this mutation."""
-  user: UserInput!
-}
-
-"""An input for mutations affecting `User`"""
-input UserInput {
-  """Unique name."""
-  username: String!
-  name: String
-  description: String
 }
 
 """The output of our update `User` mutation."""
@@ -587,10 +718,224 @@ input UserPatch {
   description: String
 }
 
+"""The output of our delete `Account` mutation."""
+type DeleteAccountPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Account` that was deleted by this mutation."""
+  account: Account
+  deletedAccountNodeId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Account`."""
+  user: User
+
+  """An edge for our `Account`. May be used by Relay 1."""
+  accountEdge(
+    """The method to use when ordering `Account`."""
+    orderBy: [AccountsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): AccountsEdge
+}
+
+"""All input for the `deleteAccount` mutation."""
+input DeleteAccountInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+}
+
+"""The output of our delete `Tweet` mutation."""
+type DeleteTweetPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Tweet` that was deleted by this mutation."""
+  tweet: Tweet
+  deletedTweetNodeId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Tweet`."""
+  author: User
+
+  """An edge for our `Tweet`. May be used by Relay 1."""
+  tweetEdge(
+    """The method to use when ordering `Tweet`."""
+    orderBy: [TweetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): TweetsEdge
+}
+
+"""All input for the `deleteTweet` mutation."""
+input DeleteTweetInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+}
+
 """
-The root subscription type: contains realtime events you can subscribe to with the `subscription` operation.
+The root subscription type: contains events and live queries you can subscribe to with the `subscription` operation.
+
+#### Live Queries
+
+Live query fields are differentiated by containing `(live)` at the end of their
+description, they are added for each field in the `Query` type. When you
+subscribe to a live query field, the selection set will be evaluated and sent to
+the client, and then most things\* that would cause the output of the selection
+set to change will trigger the selection set to be re-evaluated and the results
+to be re-sent to the client.
+
+_(\* Not everything: typically only changes to persisted data referenced by the query are detected, not computed fields.)_
+
+Live queries can be very expensive, so try and keep them small and focussed.
+
+#### Events
+
+Event fields will run their selection set when, and only when, the specified
+server-side event occurs. This makes them a lot more efficient than Live
+Queries, but it is still recommended that you keep payloads fairly small.
 """
 type Subscription {
+  """Reads and enables pagination through a set of `Account`. (live)"""
+  accounts(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Account`."""
+    orderBy: [AccountsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AccountCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AccountFilter
+  ): AccountsConnection
+
+  """Reads and enables pagination through a set of `Tweet`. (live)"""
+  tweets(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Tweet`."""
+    orderBy: [TweetsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: TweetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: TweetFilter
+  ): TweetsConnection
+
+  """Reads and enables pagination through a set of `User`. (live)"""
+  users(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `User`."""
+    orderBy: [UsersOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: UserCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: UserFilter
+  ): UsersConnection
+
+  """ (live)"""
+  account(id: UUID!): Account
+
+  """ (live)"""
+  tweet(id: UUID!): Tweet
+
+  """ (live)"""
+  user(id: UUID!): User
+
+  """ (live)"""
+  userByUsername(username: String!): User
+
+  """The currently logged in user (or null if not logged in). (live)"""
+  currentUser: User
+
+  """
+  Handy method to get the current user ID for use in RLS policies, etc; in GraphQL, use `currentUser{id}` instead. (live)
+  """
+  currentUserId: UUID
   listen(topic: String!): ListenPayload!
 }
 

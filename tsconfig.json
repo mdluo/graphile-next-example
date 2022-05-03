@@ -9,9 +9,6 @@
       "esnext"
     ],
     "baseUrl": ".",
-    "paths": {
-      "*": ["packages/*"],
-    },
     "moduleResolution": "node",
     "strict": true,
     "allowJs": true,

@@ -1,6 +1,8 @@
 import NextAuth from 'next-auth';
 import GithubProvider from 'next-auth/providers/github';
 
+import { ownerPgPool } from 'server/utils/db';
+
 export default NextAuth({
   // Configure one or more authentication providers
   providers: [
@@ -14,12 +16,30 @@ export default NextAuth({
     colorScheme: 'light',
   },
   callbacks: {
-    jwt: async ({ token, account }) => {
-      // TODO: query user_id from DB
-      return { ...token, user_id: 'user_id' };
+    jwt: async ({ token, user: userDetails, account }) => {
+      if (!account) {
+        return token;
+      }
+      const { provider, providerAccountId, ...accountDetails } = account;
+      const {
+        rows: [user],
+      } = await ownerPgPool.query(
+        'select * from app_private.link_or_register_user($1, $2, $3, $4, $5)',
+        [
+          token.user_id,
+          provider,
+          providerAccountId,
+          userDetails,
+          accountDetails,
+        ],
+      );
+      return { ...token, user };
     },
     session: async ({ session, token }) => {
-      return { ...session, user_id: token.user_id };
+      if (token) {
+        return { ...session, user: token.user } as typeof session;
+      }
+      return session;
     },
   },
 });

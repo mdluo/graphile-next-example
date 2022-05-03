@@ -1,35 +1,19 @@
+import { useState } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import { useQuery, gql } from '@apollo/client';
-import { Button } from '@blueprintjs/core';
+import { Button, TextArea } from '@blueprintjs/core';
 
-const TIMELINE_QUERY = gql`
-  query Timeline {
-    tweets(first: 50) {
-      edges {
-        node {
-          id
-          text
-          createdAt
-          author {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`;
+import { useTweetsQuery, useCreateTweetMutation } from 'graphql/generated';
 
 const Index: React.FC = () => {
-  const router = useRouter();
-
   const session = useSession({
     required: true,
     onUnauthenticated: signIn,
   });
 
-  const { loading, error, data } = useQuery(TIMELINE_QUERY);
+  const { loading, error, data, updateQuery } = useTweetsQuery();
+
+  const [text, setText] = useState('');
+  const [createTweetMutation] = useCreateTweetMutation();
 
   if (!session || session.status === 'loading' || loading || error) {
     return null;
@@ -37,15 +21,42 @@ const Index: React.FC = () => {
 
   return (
     <div className="container py-3 mx-auto">
-      <Button className="mb-2" onClick={() => router.push('/404')}>
-        Test
-      </Button>
-
       <Button className="mb-2" onClick={() => signOut()}>
         Logout
       </Button>
       <p>Hello {session.data.user?.name}</p>
-      <pre>{JSON.stringify(data)}</pre>
+      <TextArea
+        growVertically={true}
+        large={true}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <Button
+        onClick={async () => {
+          const { data } = await createTweetMutation({ variables: { text } });
+          const newTweet = data?.createTweet?.tweetEdge;
+          if (newTweet) {
+            updateQuery((prev) => {
+              return {
+                ...prev,
+                tweets: {
+                  ...prev.tweets,
+                  edges: [newTweet, ...(prev.tweets?.edges ?? [])],
+                },
+              } as typeof prev;
+            });
+          }
+        }}
+      >
+        Post
+      </Button>
+      <ul>
+        {data?.tweets?.edges?.map(({ node }) => (
+          <li key={node.id}>
+            {node.text} - {node.createdAt}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

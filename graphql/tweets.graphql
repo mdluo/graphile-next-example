@@ -1,0 +1,28 @@
+fragment TweetsEdgeFragment on TweetsEdge {
+  node {
+    id
+    text
+    author {
+      id
+      name
+      image
+    }
+    createdAt
+  }
+}
+
+query Tweets {
+  tweets(first: 50) {
+    edges {
+      ...TweetsEdgeFragment
+    }
+  }
+}
+
+mutation CreateTweet($text: String!) {
+  createTweet(input: {tweet: {text: $text}}) {
+    tweetEdge {
+      ...TweetsEdgeFragment
+    }
+  }
+}
