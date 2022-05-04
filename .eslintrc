@@ -22,6 +22,7 @@
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
     "prettier/prettier": "error",
+    "curly": "error",
     "tailwindcss/no-custom-classname": [
       "warn",
       {

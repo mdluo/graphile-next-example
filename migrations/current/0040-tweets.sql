@@ -22,3 +22,20 @@ create policy delete_own on app_public.tweets for delete using (author_id = app_
 grant select on app_public.tweets to :DB_VISITOR;
 grant insert (text) on app_public.tweets to :DB_VISITOR;
 grant delete on app_public.tweets to :DB_VISITOR;
+
+create function app_public.on_new_tweet() returns trigger as $$
+begin
+ perform pg_notify('postgraphile:newTweet', json_build_object(
+    '__node__', json_build_array(
+      'tweets',
+      NEW.id
+    )
+  )::text);
+  return new;
+end;
+$$ language plpgsql volatile;
+
+create trigger _500_gql_update
+  after insert on app_public.tweets
+  for each row
+  execute procedure app_public.on_new_tweet();

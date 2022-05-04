@@ -1,5 +1,16 @@
 """The root query type which gives access points into the data universe."""
-type Query {
+type Query implements Node {
+  """
+  The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`.
+  """
+  nodeId: ID!
+
+  """Fetches an object given its globally unique `ID`."""
+  node(
+    """The globally unique `ID`."""
+    nodeId: ID!
+  ): Node
+
   """Reads and enables pagination through a set of `Account`."""
   accounts(
     """Only read the first `n` values of the set."""
@@ -113,6 +124,32 @@ type Query {
   Handy method to get the current user ID for use in RLS policies, etc; in GraphQL, use `currentUser{id}` instead.
   """
   currentUserId: UUID
+
+  """Reads a single `Account` using its globally unique `ID`."""
+  accountByNodeId(
+    """The globally unique `ID` to be used in selecting a single `Account`."""
+    nodeId: ID!
+  ): Account
+
+  """Reads a single `Tweet` using its globally unique `ID`."""
+  tweetByNodeId(
+    """The globally unique `ID` to be used in selecting a single `Tweet`."""
+    nodeId: ID!
+  ): Tweet
+
+  """Reads a single `User` using its globally unique `ID`."""
+  userByNodeId(
+    """The globally unique `ID` to be used in selecting a single `User`."""
+    nodeId: ID!
+  ): User
+}
+
+"""An object with a globally unique `ID`."""
+interface Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
 }
 
 """A connection to a list of `Account` values."""
@@ -132,7 +169,11 @@ type AccountsConnection {
   totalCount: Int!
 }
 
-type Account {
+type Account implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
   id: UUID!
   userId: UUID!
   provider: String!
@@ -162,7 +203,11 @@ A point in time as described by the [ISO
 scalar Datetime
 
 """A user who can log in to the application."""
-type User {
+type User implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
   id: UUID!
 
   """Unique name."""
@@ -346,7 +391,11 @@ type TweetsConnection {
   totalCount: Int!
 }
 
-type Tweet {
+type Tweet implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
   id: UUID!
   authorId: UUID!
   text: String!
@@ -604,6 +653,14 @@ type Mutation {
     input: CreateTweetInput!
   ): CreateTweetPayload
 
+  """Updates a single `User` using its globally unique id and a patch."""
+  updateUserByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateUserByNodeIdInput!
+  ): UpdateUserPayload
+
   """Updates a single `User` using a unique key and a patch."""
   updateUser(
     """
@@ -612,6 +669,14 @@ type Mutation {
     input: UpdateUserInput!
   ): UpdateUserPayload
 
+  """Deletes a single `Account` using its globally unique id."""
+  deleteAccountByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteAccountByNodeIdInput!
+  ): DeleteAccountPayload
+
   """Deletes a single `Account` using a unique key."""
   deleteAccount(
     """
@@ -619,6 +684,14 @@ type Mutation {
     """
     input: DeleteAccountInput!
   ): DeleteAccountPayload
+
+  """Deletes a single `Tweet` using its globally unique id."""
+  deleteTweetByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteTweetByNodeIdInput!
+  ): DeleteTweetPayload
 
   """Deletes a single `Tweet` using a unique key."""
   deleteTweet(
@@ -695,6 +768,33 @@ type UpdateUserPayload {
   ): UsersEdge
 }
 
+"""All input for the `updateUserByNodeId` mutation."""
+input UpdateUserByNodeIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `User` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `User` being updated.
+  """
+  patch: UserPatch!
+}
+
+"""Represents an update to a `User`. Fields that are set will be updated."""
+input UserPatch {
+  """Unique name."""
+  username: String
+  name: String
+  description: String
+}
+
 """All input for the `updateUser` mutation."""
 input UpdateUserInput {
   """
@@ -708,14 +808,6 @@ input UpdateUserInput {
   """
   patch: UserPatch!
   id: UUID!
-}
-
-"""Represents an update to a `User`. Fields that are set will be updated."""
-input UserPatch {
-  """Unique name."""
-  username: String
-  name: String
-  description: String
 }
 
 """The output of our delete `Account` mutation."""
@@ -743,6 +835,20 @@ type DeleteAccountPayload {
     """The method to use when ordering `Account`."""
     orderBy: [AccountsOrderBy!] = [PRIMARY_KEY_ASC]
   ): AccountsEdge
+}
+
+"""All input for the `deleteAccountByNodeId` mutation."""
+input DeleteAccountByNodeIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Account` to be deleted.
+  """
+  nodeId: ID!
 }
 
 """All input for the `deleteAccount` mutation."""
@@ -782,6 +888,20 @@ type DeleteTweetPayload {
   ): TweetsEdge
 }
 
+"""All input for the `deleteTweetByNodeId` mutation."""
+input DeleteTweetByNodeIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Tweet` to be deleted.
+  """
+  nodeId: ID!
+}
+
 """All input for the `deleteTweet` mutation."""
 input DeleteTweetInput {
   """
@@ -804,4 +924,6 @@ type ListenPayload {
   Our root query field type. Allows us to run any query from our subscription payload.
   """
   query: Query
+  relatedNode: Node
+  relatedNodeId: ID
 }

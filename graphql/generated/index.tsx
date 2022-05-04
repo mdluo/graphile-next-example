@@ -27,11 +27,13 @@ export type Scalars = {
   UUID: any;
 };
 
-export type Account = {
+export type Account = Node & {
   __typename?: 'Account';
   accountDetails: Scalars['JSON'];
   createdAt: Scalars['Datetime'];
   id: Scalars['UUID'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
   provider: Scalars['String'];
   providerAccountId: Scalars['String'];
   updatedAt: Scalars['Datetime'];
@@ -156,6 +158,17 @@ export type DatetimeFilter = {
   notIn?: InputMaybe<Array<Scalars['Datetime']>>;
 };
 
+/** All input for the `deleteAccountByNodeId` mutation. */
+export type DeleteAccountByNodeIdInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  /** The globally unique `ID` which will identify a single `Account` to be deleted. */
+  nodeId: Scalars['ID'];
+};
+
 /** All input for the `deleteAccount` mutation. */
 export type DeleteAccountInput = {
   /**
@@ -189,6 +202,17 @@ export type DeleteAccountPayload = {
 /** The output of our delete `Account` mutation. */
 export type DeleteAccountPayloadAccountEdgeArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
+};
+
+/** All input for the `deleteTweetByNodeId` mutation. */
+export type DeleteTweetByNodeIdInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  /** The globally unique `ID` which will identify a single `Tweet` to be deleted. */
+  nodeId: Scalars['ID'];
 };
 
 /** All input for the `deleteTweet` mutation. */
@@ -230,6 +254,8 @@ export type ListenPayload = {
   __typename?: 'ListenPayload';
   /** Our root query field type. Allows us to run any query from our subscription payload. */
   query?: Maybe<Query>;
+  relatedNode?: Maybe<Node>;
+  relatedNodeId?: Maybe<Scalars['ID']>;
 };
 
 /** The root mutation type which contains root level fields which mutate data. */
@@ -239,10 +265,16 @@ export type Mutation = {
   createTweet?: Maybe<CreateTweetPayload>;
   /** Deletes a single `Account` using a unique key. */
   deleteAccount?: Maybe<DeleteAccountPayload>;
+  /** Deletes a single `Account` using its globally unique id. */
+  deleteAccountByNodeId?: Maybe<DeleteAccountPayload>;
   /** Deletes a single `Tweet` using a unique key. */
   deleteTweet?: Maybe<DeleteTweetPayload>;
+  /** Deletes a single `Tweet` using its globally unique id. */
+  deleteTweetByNodeId?: Maybe<DeleteTweetPayload>;
   /** Updates a single `User` using a unique key and a patch. */
   updateUser?: Maybe<UpdateUserPayload>;
+  /** Updates a single `User` using its globally unique id and a patch. */
+  updateUserByNodeId?: Maybe<UpdateUserPayload>;
 };
 
 
@@ -259,14 +291,38 @@ export type MutationDeleteAccountArgs = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
+export type MutationDeleteAccountByNodeIdArgs = {
+  input: DeleteAccountByNodeIdInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
 export type MutationDeleteTweetArgs = {
   input: DeleteTweetInput;
 };
 
 
 /** The root mutation type which contains root level fields which mutate data. */
+export type MutationDeleteTweetByNodeIdArgs = {
+  input: DeleteTweetByNodeIdInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
 export type MutationUpdateUserArgs = {
   input: UpdateUserInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationUpdateUserByNodeIdArgs = {
+  input: UpdateUserByNodeIdInput;
+};
+
+/** An object with a globally unique `ID`. */
+export type Node = {
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
 };
 
 /** Information about pagination in a connection. */
@@ -283,19 +339,29 @@ export type PageInfo = {
 };
 
 /** The root query type which gives access points into the data universe. */
-export type Query = {
+export type Query = Node & {
   __typename?: 'Query';
   account?: Maybe<Account>;
+  /** Reads a single `Account` using its globally unique `ID`. */
+  accountByNodeId?: Maybe<Account>;
   /** Reads and enables pagination through a set of `Account`. */
   accounts?: Maybe<AccountsConnection>;
   /** The currently logged in user (or null if not logged in). */
   currentUser?: Maybe<User>;
   /** Handy method to get the current user ID for use in RLS policies, etc; in GraphQL, use `currentUser{id}` instead. */
   currentUserId?: Maybe<Scalars['UUID']>;
+  /** Fetches an object given its globally unique `ID`. */
+  node?: Maybe<Node>;
+  /** The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`. */
+  nodeId: Scalars['ID'];
   tweet?: Maybe<Tweet>;
+  /** Reads a single `Tweet` using its globally unique `ID`. */
+  tweetByNodeId?: Maybe<Tweet>;
   /** Reads and enables pagination through a set of `Tweet`. */
   tweets?: Maybe<TweetsConnection>;
   user?: Maybe<User>;
+  /** Reads a single `User` using its globally unique `ID`. */
+  userByNodeId?: Maybe<User>;
   userByUsername?: Maybe<User>;
   /** Reads and enables pagination through a set of `User`. */
   users?: Maybe<UsersConnection>;
@@ -305,6 +371,12 @@ export type Query = {
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountArgs = {
   id: Scalars['UUID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryAccountByNodeIdArgs = {
+  nodeId: Scalars['ID'];
 };
 
 
@@ -322,8 +394,20 @@ export type QueryAccountsArgs = {
 
 
 /** The root query type which gives access points into the data universe. */
+export type QueryNodeArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
 export type QueryTweetArgs = {
   id: Scalars['UUID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryTweetByNodeIdArgs = {
+  nodeId: Scalars['ID'];
 };
 
 
@@ -343,6 +427,12 @@ export type QueryTweetsArgs = {
 /** The root query type which gives access points into the data universe. */
 export type QueryUserArgs = {
   id: Scalars['UUID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUserByNodeIdArgs = {
+  nodeId: Scalars['ID'];
 };
 
 
@@ -390,295 +480,27 @@ export type StringFilter = {
   notIn?: InputMaybe<Array<Scalars['String']>>;
 };
 
-/**
- * The root subscription type: contains events and live queries you can subscribe to with the `subscription` operation.
- *
- * #### Live Queries
- *
- * Live query fields are differentiated by containing `(live)` at the end of their
- * description, they are added for each field in the `Query` type. When you
- * subscribe to a live query field, the selection set will be evaluated and sent to
- * the client, and then most things\* that would cause the output of the selection
- * set to change will trigger the selection set to be re-evaluated and the results
- * to be re-sent to the client.
- *
- * _(\* Not everything: typically only changes to persisted data referenced by the query are detected, not computed fields.)_
- *
- * Live queries can be very expensive, so try and keep them small and focussed.
- *
- * #### Events
- *
- * Event fields will run their selection set when, and only when, the specified
- * server-side event occurs. This makes them a lot more efficient than Live
- * Queries, but it is still recommended that you keep payloads fairly small.
- */
+/** The root subscription type: contains realtime events you can subscribe to with the `subscription` operation. */
 export type Subscription = {
   __typename?: 'Subscription';
-  /**  (live) */
-  account?: Maybe<Account>;
-  /** Reads and enables pagination through a set of `Account`. (live) */
-  accounts?: Maybe<AccountsConnection>;
-  /** The currently logged in user (or null if not logged in). (live) */
-  currentUser?: Maybe<User>;
-  /** Handy method to get the current user ID for use in RLS policies, etc; in GraphQL, use `currentUser{id}` instead. (live) */
-  currentUserId?: Maybe<Scalars['UUID']>;
   listen: ListenPayload;
-  /**  (live) */
-  tweet?: Maybe<Tweet>;
-  /** Reads and enables pagination through a set of `Tweet`. (live) */
-  tweets?: Maybe<TweetsConnection>;
-  /**  (live) */
-  user?: Maybe<User>;
-  /**  (live) */
-  userByUsername?: Maybe<User>;
-  /** Reads and enables pagination through a set of `User`. (live) */
-  users?: Maybe<UsersConnection>;
 };
 
 
-/**
- * The root subscription type: contains events and live queries you can subscribe to with the `subscription` operation.
- *
- * #### Live Queries
- *
- * Live query fields are differentiated by containing `(live)` at the end of their
- * description, they are added for each field in the `Query` type. When you
- * subscribe to a live query field, the selection set will be evaluated and sent to
- * the client, and then most things\* that would cause the output of the selection
- * set to change will trigger the selection set to be re-evaluated and the results
- * to be re-sent to the client.
- *
- * _(\* Not everything: typically only changes to persisted data referenced by the query are detected, not computed fields.)_
- *
- * Live queries can be very expensive, so try and keep them small and focussed.
- *
- * #### Events
- *
- * Event fields will run their selection set when, and only when, the specified
- * server-side event occurs. This makes them a lot more efficient than Live
- * Queries, but it is still recommended that you keep payloads fairly small.
- */
-export type SubscriptionAccountArgs = {
-  id: Scalars['UUID'];
-};
-
-
-/**
- * The root subscription type: contains events and live queries you can subscribe to with the `subscription` operation.
- *
- * #### Live Queries
- *
- * Live query fields are differentiated by containing `(live)` at the end of their
- * description, they are added for each field in the `Query` type. When you
- * subscribe to a live query field, the selection set will be evaluated and sent to
- * the client, and then most things\* that would cause the output of the selection
- * set to change will trigger the selection set to be re-evaluated and the results
- * to be re-sent to the client.
- *
- * _(\* Not everything: typically only changes to persisted data referenced by the query are detected, not computed fields.)_
- *
- * Live queries can be very expensive, so try and keep them small and focussed.
- *
- * #### Events
- *
- * Event fields will run their selection set when, and only when, the specified
- * server-side event occurs. This makes them a lot more efficient than Live
- * Queries, but it is still recommended that you keep payloads fairly small.
- */
-export type SubscriptionAccountsArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  condition?: InputMaybe<AccountCondition>;
-  filter?: InputMaybe<AccountFilter>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
-};
-
-
-/**
- * The root subscription type: contains events and live queries you can subscribe to with the `subscription` operation.
- *
- * #### Live Queries
- *
- * Live query fields are differentiated by containing `(live)` at the end of their
- * description, they are added for each field in the `Query` type. When you
- * subscribe to a live query field, the selection set will be evaluated and sent to
- * the client, and then most things\* that would cause the output of the selection
- * set to change will trigger the selection set to be re-evaluated and the results
- * to be re-sent to the client.
- *
- * _(\* Not everything: typically only changes to persisted data referenced by the query are detected, not computed fields.)_
- *
- * Live queries can be very expensive, so try and keep them small and focussed.
- *
- * #### Events
- *
- * Event fields will run their selection set when, and only when, the specified
- * server-side event occurs. This makes them a lot more efficient than Live
- * Queries, but it is still recommended that you keep payloads fairly small.
- */
+/** The root subscription type: contains realtime events you can subscribe to with the `subscription` operation. */
 export type SubscriptionListenArgs = {
   topic: Scalars['String'];
 };
 
-
-/**
- * The root subscription type: contains events and live queries you can subscribe to with the `subscription` operation.
- *
- * #### Live Queries
- *
- * Live query fields are differentiated by containing `(live)` at the end of their
- * description, they are added for each field in the `Query` type. When you
- * subscribe to a live query field, the selection set will be evaluated and sent to
- * the client, and then most things\* that would cause the output of the selection
- * set to change will trigger the selection set to be re-evaluated and the results
- * to be re-sent to the client.
- *
- * _(\* Not everything: typically only changes to persisted data referenced by the query are detected, not computed fields.)_
- *
- * Live queries can be very expensive, so try and keep them small and focussed.
- *
- * #### Events
- *
- * Event fields will run their selection set when, and only when, the specified
- * server-side event occurs. This makes them a lot more efficient than Live
- * Queries, but it is still recommended that you keep payloads fairly small.
- */
-export type SubscriptionTweetArgs = {
-  id: Scalars['UUID'];
-};
-
-
-/**
- * The root subscription type: contains events and live queries you can subscribe to with the `subscription` operation.
- *
- * #### Live Queries
- *
- * Live query fields are differentiated by containing `(live)` at the end of their
- * description, they are added for each field in the `Query` type. When you
- * subscribe to a live query field, the selection set will be evaluated and sent to
- * the client, and then most things\* that would cause the output of the selection
- * set to change will trigger the selection set to be re-evaluated and the results
- * to be re-sent to the client.
- *
- * _(\* Not everything: typically only changes to persisted data referenced by the query are detected, not computed fields.)_
- *
- * Live queries can be very expensive, so try and keep them small and focussed.
- *
- * #### Events
- *
- * Event fields will run their selection set when, and only when, the specified
- * server-side event occurs. This makes them a lot more efficient than Live
- * Queries, but it is still recommended that you keep payloads fairly small.
- */
-export type SubscriptionTweetsArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  condition?: InputMaybe<TweetCondition>;
-  filter?: InputMaybe<TweetFilter>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<TweetsOrderBy>>;
-};
-
-
-/**
- * The root subscription type: contains events and live queries you can subscribe to with the `subscription` operation.
- *
- * #### Live Queries
- *
- * Live query fields are differentiated by containing `(live)` at the end of their
- * description, they are added for each field in the `Query` type. When you
- * subscribe to a live query field, the selection set will be evaluated and sent to
- * the client, and then most things\* that would cause the output of the selection
- * set to change will trigger the selection set to be re-evaluated and the results
- * to be re-sent to the client.
- *
- * _(\* Not everything: typically only changes to persisted data referenced by the query are detected, not computed fields.)_
- *
- * Live queries can be very expensive, so try and keep them small and focussed.
- *
- * #### Events
- *
- * Event fields will run their selection set when, and only when, the specified
- * server-side event occurs. This makes them a lot more efficient than Live
- * Queries, but it is still recommended that you keep payloads fairly small.
- */
-export type SubscriptionUserArgs = {
-  id: Scalars['UUID'];
-};
-
-
-/**
- * The root subscription type: contains events and live queries you can subscribe to with the `subscription` operation.
- *
- * #### Live Queries
- *
- * Live query fields are differentiated by containing `(live)` at the end of their
- * description, they are added for each field in the `Query` type. When you
- * subscribe to a live query field, the selection set will be evaluated and sent to
- * the client, and then most things\* that would cause the output of the selection
- * set to change will trigger the selection set to be re-evaluated and the results
- * to be re-sent to the client.
- *
- * _(\* Not everything: typically only changes to persisted data referenced by the query are detected, not computed fields.)_
- *
- * Live queries can be very expensive, so try and keep them small and focussed.
- *
- * #### Events
- *
- * Event fields will run their selection set when, and only when, the specified
- * server-side event occurs. This makes them a lot more efficient than Live
- * Queries, but it is still recommended that you keep payloads fairly small.
- */
-export type SubscriptionUserByUsernameArgs = {
-  username: Scalars['String'];
-};
-
-
-/**
- * The root subscription type: contains events and live queries you can subscribe to with the `subscription` operation.
- *
- * #### Live Queries
- *
- * Live query fields are differentiated by containing `(live)` at the end of their
- * description, they are added for each field in the `Query` type. When you
- * subscribe to a live query field, the selection set will be evaluated and sent to
- * the client, and then most things\* that would cause the output of the selection
- * set to change will trigger the selection set to be re-evaluated and the results
- * to be re-sent to the client.
- *
- * _(\* Not everything: typically only changes to persisted data referenced by the query are detected, not computed fields.)_
- *
- * Live queries can be very expensive, so try and keep them small and focussed.
- *
- * #### Events
- *
- * Event fields will run their selection set when, and only when, the specified
- * server-side event occurs. This makes them a lot more efficient than Live
- * Queries, but it is still recommended that you keep payloads fairly small.
- */
-export type SubscriptionUsersArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  condition?: InputMaybe<UserCondition>;
-  filter?: InputMaybe<UserFilter>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<UsersOrderBy>>;
-};
-
-export type Tweet = {
+export type Tweet = Node & {
   __typename?: 'Tweet';
   /** Reads a single `User` that is related to this `Tweet`. */
   author?: Maybe<User>;
   authorId: Scalars['UUID'];
   createdAt: Scalars['Datetime'];
   id: Scalars['UUID'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
   text: Scalars['String'];
   updatedAt: Scalars['Datetime'];
 };
@@ -775,6 +597,19 @@ export type UuidFilter = {
   notIn?: InputMaybe<Array<Scalars['UUID']>>;
 };
 
+/** All input for the `updateUserByNodeId` mutation. */
+export type UpdateUserByNodeIdInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  /** The globally unique `ID` which will identify a single `User` to be updated. */
+  nodeId: Scalars['ID'];
+  /** An object where the defined keys will be set on the `User` being updated. */
+  patch: UserPatch;
+};
+
 /** All input for the `updateUser` mutation. */
 export type UpdateUserInput = {
   /**
@@ -810,7 +645,7 @@ export type UpdateUserPayloadUserEdgeArgs = {
 };
 
 /** A user who can log in to the application. */
-export type User = {
+export type User = Node & {
   __typename?: 'User';
   /** Reads and enables pagination through a set of `Account`. */
   accounts: AccountsConnection;
@@ -821,6 +656,8 @@ export type User = {
   id: Scalars['UUID'];
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
   updatedAt: Scalars['Datetime'];
   /** Unique name. */
   username?: Maybe<Scalars['String']>;
@@ -915,7 +752,7 @@ export enum UsersOrderBy {
   UsernameDesc = 'USERNAME_DESC'
 }
 
-export type TweetsEdgeFragmentFragment = { __typename?: 'TweetsEdge', node: { __typename?: 'Tweet', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } };
+export type TweetFragmentFragment = { __typename?: 'Tweet', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null };
 
 export type TweetsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -929,29 +766,34 @@ export type CreateTweetMutationVariables = Exact<{
 
 export type CreateTweetMutation = { __typename?: 'Mutation', createTweet?: { __typename?: 'CreateTweetPayload', tweetEdge?: { __typename?: 'TweetsEdge', node: { __typename?: 'Tweet', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } } | null } | null };
 
-export const TweetsEdgeFragmentFragmentDoc = gql`
-    fragment TweetsEdgeFragment on TweetsEdge {
-  node {
+export type NewTweetSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NewTweetSubscription = { __typename?: 'Subscription', listen: { __typename?: 'ListenPayload', relatedNode?: { __typename?: 'Account' } | { __typename?: 'Query' } | { __typename?: 'Tweet', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } | { __typename?: 'User' } | null } };
+
+export const TweetFragmentFragmentDoc = gql`
+    fragment TweetFragment on Tweet {
+  id
+  text
+  author {
     id
-    text
-    author {
-      id
-      name
-      image
-    }
-    createdAt
+    name
+    image
   }
+  createdAt
 }
     `;
 export const TweetsDocument = gql`
     query Tweets {
   tweets(first: 50) {
     edges {
-      ...TweetsEdgeFragment
+      node {
+        ...TweetFragment
+      }
     }
   }
 }
-    ${TweetsEdgeFragmentFragmentDoc}`;
+    ${TweetFragmentFragmentDoc}`;
 
 /**
  * __useTweetsQuery__
@@ -983,11 +825,13 @@ export const CreateTweetDocument = gql`
     mutation CreateTweet($text: String!) {
   createTweet(input: {tweet: {text: $text}}) {
     tweetEdge {
-      ...TweetsEdgeFragment
+      node {
+        ...TweetFragment
+      }
     }
   }
 }
-    ${TweetsEdgeFragmentFragmentDoc}`;
+    ${TweetFragmentFragmentDoc}`;
 export type CreateTweetMutationFn = Apollo.MutationFunction<CreateTweetMutation, CreateTweetMutationVariables>;
 
 /**
@@ -1014,3 +858,34 @@ export function useCreateTweetMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateTweetMutationHookResult = ReturnType<typeof useCreateTweetMutation>;
 export type CreateTweetMutationResult = Apollo.MutationResult<CreateTweetMutation>;
 export type CreateTweetMutationOptions = Apollo.BaseMutationOptions<CreateTweetMutation, CreateTweetMutationVariables>;
+export const NewTweetDocument = gql`
+    subscription NewTweet {
+  listen(topic: "newTweet") {
+    relatedNode {
+      ...TweetFragment
+    }
+  }
+}
+    ${TweetFragmentFragmentDoc}`;
+
+/**
+ * __useNewTweetSubscription__
+ *
+ * To run a query within a React component, call `useNewTweetSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewTweetSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewTweetSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNewTweetSubscription(baseOptions?: Apollo.SubscriptionHookOptions<NewTweetSubscription, NewTweetSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NewTweetSubscription, NewTweetSubscriptionVariables>(NewTweetDocument, options);
+      }
+export type NewTweetSubscriptionHookResult = ReturnType<typeof useNewTweetSubscription>;
+export type NewTweetSubscriptionResult = Apollo.SubscriptionResult<NewTweetSubscription>;

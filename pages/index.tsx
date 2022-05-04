@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { Button, TextArea } from '@blueprintjs/core';
 
-import { useTweetsQuery, useCreateTweetMutation } from 'graphql/generated';
+import {
+  useTweetsQuery,
+  useCreateTweetMutation,
+  useNewTweetSubscription,
+} from 'graphql/generated';
 
 const Index: React.FC = () => {
   const session = useSession({
@@ -11,6 +15,15 @@ const Index: React.FC = () => {
   });
 
   const { loading, error, data, updateQuery } = useTweetsQuery();
+
+  useNewTweetSubscription({
+    onSubscriptionData: ({ subscriptionData }) => {
+      const relatedNode = subscriptionData.data?.listen.relatedNode;
+      if (relatedNode?.__typename === 'Tweet') {
+        console.log('new tweet', relatedNode);
+      }
+    },
+  });
 
   const [text, setText] = useState('');
   const [createTweetMutation] = useCreateTweetMutation();
@@ -26,7 +39,6 @@ const Index: React.FC = () => {
       </Button>
       <p>Hello {session.data.user?.name}</p>
       <TextArea
-        growVertically={true}
         large={true}
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -52,8 +64,8 @@ const Index: React.FC = () => {
       </Button>
       <ul>
         {data?.tweets?.edges?.map(({ node }) => (
-          <li key={node.id}>
-            {node.text} - {node.createdAt}
+          <li key={node.id} className="truncate">
+            {node.text} - {node.author?.name}
           </li>
         ))}
       </ul>

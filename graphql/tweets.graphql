@@ -1,28 +1,38 @@
-fragment TweetsEdgeFragment on TweetsEdge {
-  node {
+fragment TweetFragment on Tweet {
+  id
+  text
+  author {
     id
-    text
-    author {
-      id
-      name
-      image
-    }
-    createdAt
+    name
+    image
   }
+  createdAt
 }
 
 query Tweets {
   tweets(first: 50) {
     edges {
-      ...TweetsEdgeFragment
+      node {
+        ...TweetFragment
+      }
     }
   }
 }
 
 mutation CreateTweet($text: String!) {
-  createTweet(input: {tweet: {text: $text}}) {
+  createTweet(input: { tweet: { text: $text } }) {
     tweetEdge {
-      ...TweetsEdgeFragment
+      node {
+        ...TweetFragment
+      }
+    }
+  }
+}
+
+subscription NewTweet {
+  listen(topic: "newTweet") {
+    relatedNode {
+      ...TweetFragment
     }
   }
 }
