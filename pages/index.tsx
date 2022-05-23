@@ -1,11 +1,14 @@
-import { useState } from 'react';
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { Button, TextArea } from '@blueprintjs/core';
+import { useCallback } from 'react';
+import { useSession, signIn } from 'next-auth/react';
 
+import Nav from 'components/nav';
+import Aside from 'components/aside';
+import Composer from 'components/composer';
+import Post from 'components/post';
 import {
-  useTweetsQuery,
-  useCreateTweetMutation,
-  useNewTweetSubscription,
+  usePostsQuery,
+  useCreatePostMutation,
+  useNewPostSubscription,
 } from 'graphql/generated';
 
 const Index: React.FC = () => {
@@ -14,62 +17,65 @@ const Index: React.FC = () => {
     onUnauthenticated: signIn,
   });
 
-  const { loading, error, data, updateQuery } = useTweetsQuery();
+  const { loading, error, data, updateQuery } = usePostsQuery();
 
-  useNewTweetSubscription({
+  useNewPostSubscription({
     onSubscriptionData: ({ subscriptionData }) => {
       const relatedNode = subscriptionData.data?.listen.relatedNode;
-      if (relatedNode?.__typename === 'Tweet') {
-        console.log('new tweet', relatedNode);
+      if (relatedNode?.__typename === 'Post') {
+        updateQuery((prev) => {
+          return {
+            ...prev,
+            posts: {
+              ...prev.posts,
+              edges: [relatedNode, ...(prev.posts?.edges ?? [])],
+            },
+          } as typeof prev;
+        });
       }
     },
   });
 
-  const [text, setText] = useState('');
-  const [createTweetMutation] = useCreateTweetMutation();
+  const [createPostMutation] = useCreatePostMutation();
+  const onSubmit = useCallback(
+    async (text: string) => {
+      const { data } = await createPostMutation({
+        variables: { text },
+      });
+      const newPost = data?.createPost?.postEdge;
+      if (newPost) {
+        updateQuery((prev) => {
+          return {
+            ...prev,
+            posts: {
+              ...prev.posts,
+              edges: [newPost, ...(prev.posts?.edges ?? [])],
+            },
+          } as typeof prev;
+        });
+      }
+    },
+    [createPostMutation, updateQuery],
+  );
 
   if (!session || session.status === 'loading' || loading || error) {
     return null;
   }
 
   return (
-    <div className="container py-3 mx-auto">
-      <Button className="mb-2" onClick={() => signOut()}>
-        Logout
-      </Button>
-      <p>Hello {session.data.user?.name}</p>
-      <TextArea
-        large={true}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <Button
-        onClick={async () => {
-          const { data } = await createTweetMutation({ variables: { text } });
-          const newTweet = data?.createTweet?.tweetEdge;
-          if (newTweet) {
-            updateQuery((prev) => {
-              return {
-                ...prev,
-                tweets: {
-                  ...prev.tweets,
-                  edges: [newTweet, ...(prev.tweets?.edges ?? [])],
-                },
-              } as typeof prev;
-            });
-          }
-        }}
-      >
-        Post
-      </Button>
-      <ul>
-        {data?.tweets?.edges?.map(({ node }) => (
-          <li key={node.id} className="truncate">
-            {node.text} - {node.author?.name}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <style>{`button { border: none; cursor: pointer; }`}</style>
+      <Nav />
+      <div className="container grid grid-cols-1 gap-6 py-6 px-2 mx-auto lg:grid-cols-3">
+        <Aside user={session.data.user} />
+        <main className="col-span-2">
+          <Composer onSubmit={onSubmit} />
+          {data?.posts?.edges?.map(({ node }) => (
+            <Post key={node.id} user={session.data.user} post={node} />
+          ))}
+        </main>
+      </div>
+    </>
   );
 };
 

@@ -97,39 +97,76 @@ export enum AccountsOrderBy {
   UserIdDesc = 'USER_ID_DESC'
 }
 
-/** All input for the create `Tweet` mutation. */
-export type CreateTweetInput = {
+/** All input for the create `Following` mutation. */
+export type CreateFollowingInput = {
   /**
    * An arbitrary string value with no semantic meaning. Will be included in the
    * payload verbatim. May be used to track mutations by the client.
    */
   clientMutationId?: InputMaybe<Scalars['String']>;
-  /** The `Tweet` to be created by this mutation. */
-  tweet: TweetInput;
+  /** The `Following` to be created by this mutation. */
+  following: FollowingInput;
 };
 
-/** The output of our create `Tweet` mutation. */
-export type CreateTweetPayload = {
-  __typename?: 'CreateTweetPayload';
-  /** Reads a single `User` that is related to this `Tweet`. */
+/** The output of our create `Following` mutation. */
+export type CreateFollowingPayload = {
+  __typename?: 'CreateFollowingPayload';
+  /**
+   * The exact same `clientMutationId` that was provided in the mutation input,
+   * unchanged and unused. May be used by a client to track mutations.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  /** Reads a single `User` that is related to this `Following`. */
+  followee?: Maybe<User>;
+  /** Reads a single `User` that is related to this `Following`. */
+  follower?: Maybe<User>;
+  /** The `Following` that was created by this mutation. */
+  following?: Maybe<Following>;
+  /** An edge for our `Following`. May be used by Relay 1. */
+  followingEdge?: Maybe<FollowingsEdge>;
+  /** Our root query field type. Allows us to run any query from our mutation payload. */
+  query?: Maybe<Query>;
+};
+
+
+/** The output of our create `Following` mutation. */
+export type CreateFollowingPayloadFollowingEdgeArgs = {
+  orderBy?: InputMaybe<Array<FollowingsOrderBy>>;
+};
+
+/** All input for the create `Post` mutation. */
+export type CreatePostInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  /** The `Post` to be created by this mutation. */
+  post: PostInput;
+};
+
+/** The output of our create `Post` mutation. */
+export type CreatePostPayload = {
+  __typename?: 'CreatePostPayload';
+  /** Reads a single `User` that is related to this `Post`. */
   author?: Maybe<User>;
   /**
    * The exact same `clientMutationId` that was provided in the mutation input,
    * unchanged and unused. May be used by a client to track mutations.
    */
   clientMutationId?: Maybe<Scalars['String']>;
+  /** The `Post` that was created by this mutation. */
+  post?: Maybe<Post>;
+  /** An edge for our `Post`. May be used by Relay 1. */
+  postEdge?: Maybe<PostsEdge>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
-  /** The `Tweet` that was created by this mutation. */
-  tweet?: Maybe<Tweet>;
-  /** An edge for our `Tweet`. May be used by Relay 1. */
-  tweetEdge?: Maybe<TweetsEdge>;
 };
 
 
-/** The output of our create `Tweet` mutation. */
-export type CreateTweetPayloadTweetEdgeArgs = {
-  orderBy?: InputMaybe<Array<TweetsOrderBy>>;
+/** The output of our create `Post` mutation. */
+export type CreatePostPayloadPostEdgeArgs = {
+  orderBy?: InputMaybe<Array<PostsOrderBy>>;
 };
 
 /** A filter to be used against Datetime fields. All fields are combined with a logical ‘and.’ */
@@ -204,19 +241,68 @@ export type DeleteAccountPayloadAccountEdgeArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
-/** All input for the `deleteTweetByNodeId` mutation. */
-export type DeleteTweetByNodeIdInput = {
+/** All input for the `deleteFollowingByNodeId` mutation. */
+export type DeleteFollowingByNodeIdInput = {
   /**
    * An arbitrary string value with no semantic meaning. Will be included in the
    * payload verbatim. May be used to track mutations by the client.
    */
   clientMutationId?: InputMaybe<Scalars['String']>;
-  /** The globally unique `ID` which will identify a single `Tweet` to be deleted. */
+  /** The globally unique `ID` which will identify a single `Following` to be deleted. */
   nodeId: Scalars['ID'];
 };
 
-/** All input for the `deleteTweet` mutation. */
-export type DeleteTweetInput = {
+/** All input for the `deleteFollowing` mutation. */
+export type DeleteFollowingInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  followeeId: Scalars['UUID'];
+  followerId: Scalars['UUID'];
+};
+
+/** The output of our delete `Following` mutation. */
+export type DeleteFollowingPayload = {
+  __typename?: 'DeleteFollowingPayload';
+  /**
+   * The exact same `clientMutationId` that was provided in the mutation input,
+   * unchanged and unused. May be used by a client to track mutations.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  deletedFollowingNodeId?: Maybe<Scalars['ID']>;
+  /** Reads a single `User` that is related to this `Following`. */
+  followee?: Maybe<User>;
+  /** Reads a single `User` that is related to this `Following`. */
+  follower?: Maybe<User>;
+  /** The `Following` that was deleted by this mutation. */
+  following?: Maybe<Following>;
+  /** An edge for our `Following`. May be used by Relay 1. */
+  followingEdge?: Maybe<FollowingsEdge>;
+  /** Our root query field type. Allows us to run any query from our mutation payload. */
+  query?: Maybe<Query>;
+};
+
+
+/** The output of our delete `Following` mutation. */
+export type DeleteFollowingPayloadFollowingEdgeArgs = {
+  orderBy?: InputMaybe<Array<FollowingsOrderBy>>;
+};
+
+/** All input for the `deletePostByNodeId` mutation. */
+export type DeletePostByNodeIdInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  /** The globally unique `ID` which will identify a single `Post` to be deleted. */
+  nodeId: Scalars['ID'];
+};
+
+/** All input for the `deletePost` mutation. */
+export type DeletePostInput = {
   /**
    * An arbitrary string value with no semantic meaning. Will be included in the
    * payload verbatim. May be used to track mutations by the client.
@@ -225,30 +311,107 @@ export type DeleteTweetInput = {
   id: Scalars['UUID'];
 };
 
-/** The output of our delete `Tweet` mutation. */
-export type DeleteTweetPayload = {
-  __typename?: 'DeleteTweetPayload';
-  /** Reads a single `User` that is related to this `Tweet`. */
+/** The output of our delete `Post` mutation. */
+export type DeletePostPayload = {
+  __typename?: 'DeletePostPayload';
+  /** Reads a single `User` that is related to this `Post`. */
   author?: Maybe<User>;
   /**
    * The exact same `clientMutationId` that was provided in the mutation input,
    * unchanged and unused. May be used by a client to track mutations.
    */
   clientMutationId?: Maybe<Scalars['String']>;
-  deletedTweetNodeId?: Maybe<Scalars['ID']>;
+  deletedPostNodeId?: Maybe<Scalars['ID']>;
+  /** The `Post` that was deleted by this mutation. */
+  post?: Maybe<Post>;
+  /** An edge for our `Post`. May be used by Relay 1. */
+  postEdge?: Maybe<PostsEdge>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
-  /** The `Tweet` that was deleted by this mutation. */
-  tweet?: Maybe<Tweet>;
-  /** An edge for our `Tweet`. May be used by Relay 1. */
-  tweetEdge?: Maybe<TweetsEdge>;
 };
 
 
-/** The output of our delete `Tweet` mutation. */
-export type DeleteTweetPayloadTweetEdgeArgs = {
-  orderBy?: InputMaybe<Array<TweetsOrderBy>>;
+/** The output of our delete `Post` mutation. */
+export type DeletePostPayloadPostEdgeArgs = {
+  orderBy?: InputMaybe<Array<PostsOrderBy>>;
 };
+
+export type Following = Node & {
+  __typename?: 'Following';
+  createdAt: Scalars['Datetime'];
+  /** Reads a single `User` that is related to this `Following`. */
+  followee?: Maybe<User>;
+  followeeId: Scalars['UUID'];
+  /** Reads a single `User` that is related to this `Following`. */
+  follower?: Maybe<User>;
+  followerId: Scalars['UUID'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  updatedAt: Scalars['Datetime'];
+};
+
+/**
+ * A condition to be used against `Following` object types. All fields are tested
+ * for equality and combined with a logical ‘and.’
+ */
+export type FollowingCondition = {
+  /** Checks for equality with the object’s `followeeId` field. */
+  followeeId?: InputMaybe<Scalars['UUID']>;
+  /** Checks for equality with the object’s `followerId` field. */
+  followerId?: InputMaybe<Scalars['UUID']>;
+};
+
+/** A filter to be used against `Following` object types. All fields are combined with a logical ‘and.’ */
+export type FollowingFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<FollowingFilter>>;
+  /** Filter by the object’s `followeeId` field. */
+  followeeId?: InputMaybe<UuidFilter>;
+  /** Filter by the object’s `followerId` field. */
+  followerId?: InputMaybe<UuidFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<FollowingFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<FollowingFilter>>;
+};
+
+/** An input for mutations affecting `Following` */
+export type FollowingInput = {
+  followeeId: Scalars['UUID'];
+};
+
+/** A connection to a list of `Following` values. */
+export type FollowingsConnection = {
+  __typename?: 'FollowingsConnection';
+  /** A list of edges which contains the `Following` and cursor to aid in pagination. */
+  edges: Array<FollowingsEdge>;
+  /** A list of `Following` objects. */
+  nodes: Array<Following>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Following` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A `Following` edge in the connection. */
+export type FollowingsEdge = {
+  __typename?: 'FollowingsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Following` at the end of the edge. */
+  node: Following;
+};
+
+/** Methods to use when ordering `Following`. */
+export enum FollowingsOrderBy {
+  FolloweeIdAsc = 'FOLLOWEE_ID_ASC',
+  FolloweeIdDesc = 'FOLLOWEE_ID_DESC',
+  FollowerIdAsc = 'FOLLOWER_ID_ASC',
+  FollowerIdDesc = 'FOLLOWER_ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+}
 
 export type ListenPayload = {
   __typename?: 'ListenPayload';
@@ -261,16 +424,22 @@ export type ListenPayload = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type Mutation = {
   __typename?: 'Mutation';
-  /** Creates a single `Tweet`. */
-  createTweet?: Maybe<CreateTweetPayload>;
+  /** Creates a single `Following`. */
+  createFollowing?: Maybe<CreateFollowingPayload>;
+  /** Creates a single `Post`. */
+  createPost?: Maybe<CreatePostPayload>;
   /** Deletes a single `Account` using a unique key. */
   deleteAccount?: Maybe<DeleteAccountPayload>;
   /** Deletes a single `Account` using its globally unique id. */
   deleteAccountByNodeId?: Maybe<DeleteAccountPayload>;
-  /** Deletes a single `Tweet` using a unique key. */
-  deleteTweet?: Maybe<DeleteTweetPayload>;
-  /** Deletes a single `Tweet` using its globally unique id. */
-  deleteTweetByNodeId?: Maybe<DeleteTweetPayload>;
+  /** Deletes a single `Following` using a unique key. */
+  deleteFollowing?: Maybe<DeleteFollowingPayload>;
+  /** Deletes a single `Following` using its globally unique id. */
+  deleteFollowingByNodeId?: Maybe<DeleteFollowingPayload>;
+  /** Deletes a single `Post` using a unique key. */
+  deletePost?: Maybe<DeletePostPayload>;
+  /** Deletes a single `Post` using its globally unique id. */
+  deletePostByNodeId?: Maybe<DeletePostPayload>;
   /** Updates a single `User` using a unique key and a patch. */
   updateUser?: Maybe<UpdateUserPayload>;
   /** Updates a single `User` using its globally unique id and a patch. */
@@ -279,8 +448,14 @@ export type Mutation = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreateTweetArgs = {
-  input: CreateTweetInput;
+export type MutationCreateFollowingArgs = {
+  input: CreateFollowingInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationCreatePostArgs = {
+  input: CreatePostInput;
 };
 
 
@@ -297,14 +472,26 @@ export type MutationDeleteAccountByNodeIdArgs = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteTweetArgs = {
-  input: DeleteTweetInput;
+export type MutationDeleteFollowingArgs = {
+  input: DeleteFollowingInput;
 };
 
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteTweetByNodeIdArgs = {
-  input: DeleteTweetByNodeIdInput;
+export type MutationDeleteFollowingByNodeIdArgs = {
+  input: DeleteFollowingByNodeIdInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationDeletePostArgs = {
+  input: DeletePostInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationDeletePostByNodeIdArgs = {
+  input: DeletePostByNodeIdInput;
 };
 
 
@@ -338,6 +525,85 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['Cursor']>;
 };
 
+export type Post = Node & {
+  __typename?: 'Post';
+  /** Reads a single `User` that is related to this `Post`. */
+  author?: Maybe<User>;
+  authorId: Scalars['UUID'];
+  createdAt: Scalars['Datetime'];
+  id: Scalars['UUID'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  text: Scalars['String'];
+  updatedAt: Scalars['Datetime'];
+};
+
+/** A condition to be used against `Post` object types. All fields are tested for equality and combined with a logical ‘and.’ */
+export type PostCondition = {
+  /** Checks for equality with the object’s `authorId` field. */
+  authorId?: InputMaybe<Scalars['UUID']>;
+  /** Checks for equality with the object’s `createdAt` field. */
+  createdAt?: InputMaybe<Scalars['Datetime']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['UUID']>;
+};
+
+/** A filter to be used against `Post` object types. All fields are combined with a logical ‘and.’ */
+export type PostFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<PostFilter>>;
+  /** Filter by the object’s `authorId` field. */
+  authorId?: InputMaybe<UuidFilter>;
+  /** Filter by the object’s `createdAt` field. */
+  createdAt?: InputMaybe<DatetimeFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<UuidFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<PostFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<PostFilter>>;
+};
+
+/** An input for mutations affecting `Post` */
+export type PostInput = {
+  text: Scalars['String'];
+};
+
+/** A connection to a list of `Post` values. */
+export type PostsConnection = {
+  __typename?: 'PostsConnection';
+  /** A list of edges which contains the `Post` and cursor to aid in pagination. */
+  edges: Array<PostsEdge>;
+  /** A list of `Post` objects. */
+  nodes: Array<Post>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Post` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A `Post` edge in the connection. */
+export type PostsEdge = {
+  __typename?: 'PostsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Post` at the end of the edge. */
+  node: Post;
+};
+
+/** Methods to use when ordering `Post`. */
+export enum PostsOrderBy {
+  AuthorIdAsc = 'AUTHOR_ID_ASC',
+  AuthorIdDesc = 'AUTHOR_ID_DESC',
+  CreatedAtAsc = 'CREATED_AT_ASC',
+  CreatedAtDesc = 'CREATED_AT_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+}
+
 /** The root query type which gives access points into the data universe. */
 export type Query = Node & {
   __typename?: 'Query';
@@ -350,15 +616,20 @@ export type Query = Node & {
   currentUser?: Maybe<User>;
   /** Handy method to get the current user ID for use in RLS policies, etc; in GraphQL, use `currentUser{id}` instead. */
   currentUserId?: Maybe<Scalars['UUID']>;
+  following?: Maybe<Following>;
+  /** Reads a single `Following` using its globally unique `ID`. */
+  followingByNodeId?: Maybe<Following>;
+  /** Reads and enables pagination through a set of `Following`. */
+  followings?: Maybe<FollowingsConnection>;
   /** Fetches an object given its globally unique `ID`. */
   node?: Maybe<Node>;
   /** The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`. */
   nodeId: Scalars['ID'];
-  tweet?: Maybe<Tweet>;
-  /** Reads a single `Tweet` using its globally unique `ID`. */
-  tweetByNodeId?: Maybe<Tweet>;
-  /** Reads and enables pagination through a set of `Tweet`. */
-  tweets?: Maybe<TweetsConnection>;
+  post?: Maybe<Post>;
+  /** Reads a single `Post` using its globally unique `ID`. */
+  postByNodeId?: Maybe<Post>;
+  /** Reads and enables pagination through a set of `Post`. */
+  posts?: Maybe<PostsConnection>;
   user?: Maybe<User>;
   /** Reads a single `User` using its globally unique `ID`. */
   userByNodeId?: Maybe<User>;
@@ -394,33 +665,59 @@ export type QueryAccountsArgs = {
 
 
 /** The root query type which gives access points into the data universe. */
+export type QueryFollowingArgs = {
+  followeeId: Scalars['UUID'];
+  followerId: Scalars['UUID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryFollowingByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryFollowingsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  condition?: InputMaybe<FollowingCondition>;
+  filter?: InputMaybe<FollowingFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<FollowingsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
 export type QueryNodeArgs = {
   nodeId: Scalars['ID'];
 };
 
 
 /** The root query type which gives access points into the data universe. */
-export type QueryTweetArgs = {
+export type QueryPostArgs = {
   id: Scalars['UUID'];
 };
 
 
 /** The root query type which gives access points into the data universe. */
-export type QueryTweetByNodeIdArgs = {
+export type QueryPostByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
 
 /** The root query type which gives access points into the data universe. */
-export type QueryTweetsArgs = {
+export type QueryPostsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
-  condition?: InputMaybe<TweetCondition>;
-  filter?: InputMaybe<TweetFilter>;
+  condition?: InputMaybe<PostCondition>;
+  filter?: InputMaybe<PostFilter>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<TweetsOrderBy>>;
+  orderBy?: InputMaybe<Array<PostsOrderBy>>;
 };
 
 
@@ -491,85 +788,6 @@ export type Subscription = {
 export type SubscriptionListenArgs = {
   topic: Scalars['String'];
 };
-
-export type Tweet = Node & {
-  __typename?: 'Tweet';
-  /** Reads a single `User` that is related to this `Tweet`. */
-  author?: Maybe<User>;
-  authorId: Scalars['UUID'];
-  createdAt: Scalars['Datetime'];
-  id: Scalars['UUID'];
-  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
-  nodeId: Scalars['ID'];
-  text: Scalars['String'];
-  updatedAt: Scalars['Datetime'];
-};
-
-/** A condition to be used against `Tweet` object types. All fields are tested for equality and combined with a logical ‘and.’ */
-export type TweetCondition = {
-  /** Checks for equality with the object’s `authorId` field. */
-  authorId?: InputMaybe<Scalars['UUID']>;
-  /** Checks for equality with the object’s `createdAt` field. */
-  createdAt?: InputMaybe<Scalars['Datetime']>;
-  /** Checks for equality with the object’s `id` field. */
-  id?: InputMaybe<Scalars['UUID']>;
-};
-
-/** A filter to be used against `Tweet` object types. All fields are combined with a logical ‘and.’ */
-export type TweetFilter = {
-  /** Checks for all expressions in this list. */
-  and?: InputMaybe<Array<TweetFilter>>;
-  /** Filter by the object’s `authorId` field. */
-  authorId?: InputMaybe<UuidFilter>;
-  /** Filter by the object’s `createdAt` field. */
-  createdAt?: InputMaybe<DatetimeFilter>;
-  /** Filter by the object’s `id` field. */
-  id?: InputMaybe<UuidFilter>;
-  /** Negates the expression. */
-  not?: InputMaybe<TweetFilter>;
-  /** Checks for any expressions in this list. */
-  or?: InputMaybe<Array<TweetFilter>>;
-};
-
-/** An input for mutations affecting `Tweet` */
-export type TweetInput = {
-  text: Scalars['String'];
-};
-
-/** A connection to a list of `Tweet` values. */
-export type TweetsConnection = {
-  __typename?: 'TweetsConnection';
-  /** A list of edges which contains the `Tweet` and cursor to aid in pagination. */
-  edges: Array<TweetsEdge>;
-  /** A list of `Tweet` objects. */
-  nodes: Array<Tweet>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Tweet` you could get from the connection. */
-  totalCount: Scalars['Int'];
-};
-
-/** A `Tweet` edge in the connection. */
-export type TweetsEdge = {
-  __typename?: 'TweetsEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']>;
-  /** The `Tweet` at the end of the edge. */
-  node: Tweet;
-};
-
-/** Methods to use when ordering `Tweet`. */
-export enum TweetsOrderBy {
-  AuthorIdAsc = 'AUTHOR_ID_ASC',
-  AuthorIdDesc = 'AUTHOR_ID_DESC',
-  CreatedAtAsc = 'CREATED_AT_ASC',
-  CreatedAtDesc = 'CREATED_AT_DESC',
-  IdAsc = 'ID_ASC',
-  IdDesc = 'ID_DESC',
-  Natural = 'NATURAL',
-  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
-}
 
 /** A filter to be used against UUID fields. All fields are combined with a logical ‘and.’ */
 export type UuidFilter = {
@@ -649,10 +867,14 @@ export type User = Node & {
   __typename?: 'User';
   /** Reads and enables pagination through a set of `Account`. */
   accounts: AccountsConnection;
-  /** Reads and enables pagination through a set of `Tweet`. */
-  authoredTweets: TweetsConnection;
+  /** Reads and enables pagination through a set of `Post`. */
+  authoredPosts: PostsConnection;
   createdAt: Scalars['Datetime'];
   description?: Maybe<Scalars['String']>;
+  /** Reads and enables pagination through a set of `User`. */
+  followees: UserFolloweesManyToManyConnection;
+  /** Reads and enables pagination through a set of `User`. */
+  followers: UserFollowersManyToManyConnection;
   id: Scalars['UUID'];
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -678,15 +900,41 @@ export type UserAccountsArgs = {
 
 
 /** A user who can log in to the application. */
-export type UserAuthoredTweetsArgs = {
+export type UserAuthoredPostsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
-  condition?: InputMaybe<TweetCondition>;
-  filter?: InputMaybe<TweetFilter>;
+  condition?: InputMaybe<PostCondition>;
+  filter?: InputMaybe<PostFilter>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<TweetsOrderBy>>;
+  orderBy?: InputMaybe<Array<PostsOrderBy>>;
+};
+
+
+/** A user who can log in to the application. */
+export type UserFolloweesArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  condition?: InputMaybe<UserCondition>;
+  filter?: InputMaybe<UserFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UsersOrderBy>>;
+};
+
+
+/** A user who can log in to the application. */
+export type UserFollowersArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  condition?: InputMaybe<UserCondition>;
+  filter?: InputMaybe<UserFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UsersOrderBy>>;
 };
 
 /** A condition to be used against `User` object types. All fields are tested for equality and combined with a logical ‘and.’ */
@@ -709,6 +957,54 @@ export type UserFilter = {
   or?: InputMaybe<Array<UserFilter>>;
   /** Filter by the object’s `username` field. */
   username?: InputMaybe<StringFilter>;
+};
+
+/** A connection to a list of `User` values, with data from `Following`. */
+export type UserFolloweesManyToManyConnection = {
+  __typename?: 'UserFolloweesManyToManyConnection';
+  /** A list of edges which contains the `User`, info from the `Following`, and the cursor to aid in pagination. */
+  edges: Array<UserFolloweesManyToManyEdge>;
+  /** A list of `User` objects. */
+  nodes: Array<User>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `User` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A `User` edge in the connection, with data from `Following`. */
+export type UserFolloweesManyToManyEdge = {
+  __typename?: 'UserFolloweesManyToManyEdge';
+  createdAt: Scalars['Datetime'];
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `User` at the end of the edge. */
+  node: User;
+  updatedAt: Scalars['Datetime'];
+};
+
+/** A connection to a list of `User` values, with data from `Following`. */
+export type UserFollowersManyToManyConnection = {
+  __typename?: 'UserFollowersManyToManyConnection';
+  /** A list of edges which contains the `User`, info from the `Following`, and the cursor to aid in pagination. */
+  edges: Array<UserFollowersManyToManyEdge>;
+  /** A list of `User` objects. */
+  nodes: Array<User>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `User` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A `User` edge in the connection, with data from `Following`. */
+export type UserFollowersManyToManyEdge = {
+  __typename?: 'UserFollowersManyToManyEdge';
+  createdAt: Scalars['Datetime'];
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `User` at the end of the edge. */
+  node: User;
+  updatedAt: Scalars['Datetime'];
 };
 
 /** Represents an update to a `User`. Fields that are set will be updated. */
@@ -752,27 +1048,71 @@ export enum UsersOrderBy {
   UsernameDesc = 'USERNAME_DESC'
 }
 
-export type TweetFragmentFragment = { __typename?: 'Tweet', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null };
+export type PostFragmentFragment = { __typename?: 'Post', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null };
 
-export type TweetsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TweetsQuery = { __typename?: 'Query', tweets?: { __typename?: 'TweetsConnection', edges: Array<{ __typename?: 'TweetsEdge', node: { __typename?: 'Tweet', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } }> } | null };
+export type PostsQuery = { __typename?: 'Query', posts?: { __typename?: 'PostsConnection', totalCount: number, edges: Array<{ __typename?: 'PostsEdge', node: { __typename?: 'Post', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } }> } | null };
 
-export type CreateTweetMutationVariables = Exact<{
+export type CreatePostMutationVariables = Exact<{
   text: Scalars['String'];
 }>;
 
 
-export type CreateTweetMutation = { __typename?: 'Mutation', createTweet?: { __typename?: 'CreateTweetPayload', tweetEdge?: { __typename?: 'TweetsEdge', node: { __typename?: 'Tweet', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } } | null } | null };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost?: { __typename?: 'CreatePostPayload', postEdge?: { __typename?: 'PostsEdge', node: { __typename?: 'Post', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } } | null } | null };
 
-export type NewTweetSubscriptionVariables = Exact<{ [key: string]: never; }>;
+export type NewPostSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NewTweetSubscription = { __typename?: 'Subscription', listen: { __typename?: 'ListenPayload', relatedNode?: { __typename?: 'Account' } | { __typename?: 'Query' } | { __typename?: 'Tweet', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } | { __typename?: 'User' } | null } };
+export type NewPostSubscription = { __typename?: 'Subscription', listen: { __typename?: 'ListenPayload', relatedNode?: { __typename?: 'Account' } | { __typename?: 'Following' } | { __typename?: 'Post', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } | { __typename?: 'Query' } | { __typename?: 'User' } | null } };
 
-export const TweetFragmentFragmentDoc = gql`
-    fragment TweetFragment on Tweet {
+export type FollowingFragmentFragment = { __typename?: 'User', followers: { __typename?: 'UserFollowersManyToManyConnection', totalCount: number, edges: Array<{ __typename?: 'UserFollowersManyToManyEdge', node: { __typename?: 'User', id: any, name?: string | null, image?: string | null } }> }, followees: { __typename?: 'UserFolloweesManyToManyConnection', totalCount: number, edges: Array<{ __typename?: 'UserFolloweesManyToManyEdge', node: { __typename?: 'User', id: any, name?: string | null, image?: string | null } }> } };
+
+export type GetUserQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: any, name?: string | null, image?: string | null, username?: string | null, description?: string | null, authoredPosts: { __typename?: 'PostsConnection', totalCount: number }, followers: { __typename?: 'UserFollowersManyToManyConnection', totalCount: number }, followees: { __typename?: 'UserFolloweesManyToManyConnection', totalCount: number } } | null };
+
+export type MyFollowingsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyFollowingsQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', followers: { __typename?: 'UserFollowersManyToManyConnection', totalCount: number, edges: Array<{ __typename?: 'UserFollowersManyToManyEdge', node: { __typename?: 'User', id: any, name?: string | null, image?: string | null } }> }, followees: { __typename?: 'UserFolloweesManyToManyConnection', totalCount: number, edges: Array<{ __typename?: 'UserFolloweesManyToManyEdge', node: { __typename?: 'User', id: any, name?: string | null, image?: string | null } }> } } | null };
+
+export type UserFollowingsQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type UserFollowingsQuery = { __typename?: 'Query', user?: { __typename?: 'User', followers: { __typename?: 'UserFollowersManyToManyConnection', totalCount: number, edges: Array<{ __typename?: 'UserFollowersManyToManyEdge', node: { __typename?: 'User', id: any, name?: string | null, image?: string | null } }> }, followees: { __typename?: 'UserFolloweesManyToManyConnection', totalCount: number, edges: Array<{ __typename?: 'UserFolloweesManyToManyEdge', node: { __typename?: 'User', id: any, name?: string | null, image?: string | null } }> } } | null };
+
+export type IsFollowingQueryVariables = Exact<{
+  followeeId: Scalars['UUID'];
+  followerId: Scalars['UUID'];
+}>;
+
+
+export type IsFollowingQuery = { __typename?: 'Query', following?: { __typename?: 'Following', followeeId: any } | null };
+
+export type FollowMutationVariables = Exact<{
+  followeeId: Scalars['UUID'];
+}>;
+
+
+export type FollowMutation = { __typename?: 'Mutation', createFollowing?: { __typename?: 'CreateFollowingPayload', clientMutationId?: string | null } | null };
+
+export type UnFollowMutationVariables = Exact<{
+  followeeId: Scalars['UUID'];
+  followerId: Scalars['UUID'];
+}>;
+
+
+export type UnFollowMutation = { __typename?: 'Mutation', deleteFollowing?: { __typename?: 'DeleteFollowingPayload', clientMutationId?: string | null } | null };
+
+export const PostFragmentFragmentDoc = gql`
+    fragment PostFragment on Post {
   id
   text
   author {
@@ -783,109 +1123,354 @@ export const TweetFragmentFragmentDoc = gql`
   createdAt
 }
     `;
-export const TweetsDocument = gql`
-    query Tweets {
-  tweets(first: 50) {
+export const FollowingFragmentFragmentDoc = gql`
+    fragment FollowingFragment on User {
+  followers {
     edges {
       node {
-        ...TweetFragment
+        id
+        name
+        image
       }
     }
+    totalCount
+  }
+  followees {
+    edges {
+      node {
+        id
+        name
+        image
+      }
+    }
+    totalCount
   }
 }
-    ${TweetFragmentFragmentDoc}`;
+    `;
+export const PostsDocument = gql`
+    query Posts {
+  posts(first: 50, orderBy: CREATED_AT_DESC) {
+    edges {
+      node {
+        ...PostFragment
+      }
+    }
+    totalCount
+  }
+}
+    ${PostFragmentFragmentDoc}`;
 
 /**
- * __useTweetsQuery__
+ * __usePostsQuery__
  *
- * To run a query within a React component, call `useTweetsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTweetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `usePostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useTweetsQuery({
+ * const { data, loading, error } = usePostsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useTweetsQuery(baseOptions?: Apollo.QueryHookOptions<TweetsQuery, TweetsQueryVariables>) {
+export function usePostsQuery(baseOptions?: Apollo.QueryHookOptions<PostsQuery, PostsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TweetsQuery, TweetsQueryVariables>(TweetsDocument, options);
+        return Apollo.useQuery<PostsQuery, PostsQueryVariables>(PostsDocument, options);
       }
-export function useTweetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TweetsQuery, TweetsQueryVariables>) {
+export function usePostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PostsQuery, PostsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TweetsQuery, TweetsQueryVariables>(TweetsDocument, options);
+          return Apollo.useLazyQuery<PostsQuery, PostsQueryVariables>(PostsDocument, options);
         }
-export type TweetsQueryHookResult = ReturnType<typeof useTweetsQuery>;
-export type TweetsLazyQueryHookResult = ReturnType<typeof useTweetsLazyQuery>;
-export type TweetsQueryResult = Apollo.QueryResult<TweetsQuery, TweetsQueryVariables>;
-export const CreateTweetDocument = gql`
-    mutation CreateTweet($text: String!) {
-  createTweet(input: {tweet: {text: $text}}) {
-    tweetEdge {
+export type PostsQueryHookResult = ReturnType<typeof usePostsQuery>;
+export type PostsLazyQueryHookResult = ReturnType<typeof usePostsLazyQuery>;
+export type PostsQueryResult = Apollo.QueryResult<PostsQuery, PostsQueryVariables>;
+export const CreatePostDocument = gql`
+    mutation CreatePost($text: String!) {
+  createPost(input: {post: {text: $text}}) {
+    postEdge {
       node {
-        ...TweetFragment
+        ...PostFragment
       }
     }
   }
 }
-    ${TweetFragmentFragmentDoc}`;
-export type CreateTweetMutationFn = Apollo.MutationFunction<CreateTweetMutation, CreateTweetMutationVariables>;
+    ${PostFragmentFragmentDoc}`;
+export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, CreatePostMutationVariables>;
 
 /**
- * __useCreateTweetMutation__
+ * __useCreatePostMutation__
  *
- * To run a mutation, you first call `useCreateTweetMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateTweetMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreatePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePostMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createTweetMutation, { data, loading, error }] = useCreateTweetMutation({
+ * const [createPostMutation, { data, loading, error }] = useCreatePostMutation({
  *   variables: {
  *      text: // value for 'text'
  *   },
  * });
  */
-export function useCreateTweetMutation(baseOptions?: Apollo.MutationHookOptions<CreateTweetMutation, CreateTweetMutationVariables>) {
+export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<CreatePostMutation, CreatePostMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateTweetMutation, CreateTweetMutationVariables>(CreateTweetDocument, options);
+        return Apollo.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument, options);
       }
-export type CreateTweetMutationHookResult = ReturnType<typeof useCreateTweetMutation>;
-export type CreateTweetMutationResult = Apollo.MutationResult<CreateTweetMutation>;
-export type CreateTweetMutationOptions = Apollo.BaseMutationOptions<CreateTweetMutation, CreateTweetMutationVariables>;
-export const NewTweetDocument = gql`
-    subscription NewTweet {
-  listen(topic: "newTweet") {
+export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
+export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
+export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
+export const NewPostDocument = gql`
+    subscription NewPost {
+  listen(topic: "newPost") {
     relatedNode {
-      ...TweetFragment
+      ...PostFragment
     }
   }
 }
-    ${TweetFragmentFragmentDoc}`;
+    ${PostFragmentFragmentDoc}`;
 
 /**
- * __useNewTweetSubscription__
+ * __useNewPostSubscription__
  *
- * To run a query within a React component, call `useNewTweetSubscription` and pass it any options that fit your needs.
- * When your component renders, `useNewTweetSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useNewPostSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewPostSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useNewTweetSubscription({
+ * const { data, loading, error } = useNewPostSubscription({
  *   variables: {
  *   },
  * });
  */
-export function useNewTweetSubscription(baseOptions?: Apollo.SubscriptionHookOptions<NewTweetSubscription, NewTweetSubscriptionVariables>) {
+export function useNewPostSubscription(baseOptions?: Apollo.SubscriptionHookOptions<NewPostSubscription, NewPostSubscriptionVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<NewTweetSubscription, NewTweetSubscriptionVariables>(NewTweetDocument, options);
+        return Apollo.useSubscription<NewPostSubscription, NewPostSubscriptionVariables>(NewPostDocument, options);
       }
-export type NewTweetSubscriptionHookResult = ReturnType<typeof useNewTweetSubscription>;
-export type NewTweetSubscriptionResult = Apollo.SubscriptionResult<NewTweetSubscription>;
+export type NewPostSubscriptionHookResult = ReturnType<typeof useNewPostSubscription>;
+export type NewPostSubscriptionResult = Apollo.SubscriptionResult<NewPostSubscription>;
+export const GetUserDocument = gql`
+    query GetUser($id: UUID!) {
+  user(id: $id) {
+    id
+    name
+    image
+    username
+    description
+    authoredPosts {
+      totalCount
+    }
+    followers {
+      totalCount
+    }
+    followees {
+      totalCount
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserQuery__
+ *
+ * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetUserQuery(baseOptions: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+      }
+export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+        }
+export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
+export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
+export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export const MyFollowingsDocument = gql`
+    query MyFollowings {
+  currentUser {
+    ...FollowingFragment
+  }
+}
+    ${FollowingFragmentFragmentDoc}`;
+
+/**
+ * __useMyFollowingsQuery__
+ *
+ * To run a query within a React component, call `useMyFollowingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyFollowingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyFollowingsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMyFollowingsQuery(baseOptions?: Apollo.QueryHookOptions<MyFollowingsQuery, MyFollowingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyFollowingsQuery, MyFollowingsQueryVariables>(MyFollowingsDocument, options);
+      }
+export function useMyFollowingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyFollowingsQuery, MyFollowingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyFollowingsQuery, MyFollowingsQueryVariables>(MyFollowingsDocument, options);
+        }
+export type MyFollowingsQueryHookResult = ReturnType<typeof useMyFollowingsQuery>;
+export type MyFollowingsLazyQueryHookResult = ReturnType<typeof useMyFollowingsLazyQuery>;
+export type MyFollowingsQueryResult = Apollo.QueryResult<MyFollowingsQuery, MyFollowingsQueryVariables>;
+export const UserFollowingsDocument = gql`
+    query UserFollowings($id: UUID!) {
+  user(id: $id) {
+    ...FollowingFragment
+  }
+}
+    ${FollowingFragmentFragmentDoc}`;
+
+/**
+ * __useUserFollowingsQuery__
+ *
+ * To run a query within a React component, call `useUserFollowingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserFollowingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserFollowingsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUserFollowingsQuery(baseOptions: Apollo.QueryHookOptions<UserFollowingsQuery, UserFollowingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserFollowingsQuery, UserFollowingsQueryVariables>(UserFollowingsDocument, options);
+      }
+export function useUserFollowingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserFollowingsQuery, UserFollowingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserFollowingsQuery, UserFollowingsQueryVariables>(UserFollowingsDocument, options);
+        }
+export type UserFollowingsQueryHookResult = ReturnType<typeof useUserFollowingsQuery>;
+export type UserFollowingsLazyQueryHookResult = ReturnType<typeof useUserFollowingsLazyQuery>;
+export type UserFollowingsQueryResult = Apollo.QueryResult<UserFollowingsQuery, UserFollowingsQueryVariables>;
+export const IsFollowingDocument = gql`
+    query IsFollowing($followeeId: UUID!, $followerId: UUID!) {
+  following(followeeId: $followeeId, followerId: $followerId) {
+    followeeId
+  }
+}
+    `;
+
+/**
+ * __useIsFollowingQuery__
+ *
+ * To run a query within a React component, call `useIsFollowingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIsFollowingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIsFollowingQuery({
+ *   variables: {
+ *      followeeId: // value for 'followeeId'
+ *      followerId: // value for 'followerId'
+ *   },
+ * });
+ */
+export function useIsFollowingQuery(baseOptions: Apollo.QueryHookOptions<IsFollowingQuery, IsFollowingQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<IsFollowingQuery, IsFollowingQueryVariables>(IsFollowingDocument, options);
+      }
+export function useIsFollowingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<IsFollowingQuery, IsFollowingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<IsFollowingQuery, IsFollowingQueryVariables>(IsFollowingDocument, options);
+        }
+export type IsFollowingQueryHookResult = ReturnType<typeof useIsFollowingQuery>;
+export type IsFollowingLazyQueryHookResult = ReturnType<typeof useIsFollowingLazyQuery>;
+export type IsFollowingQueryResult = Apollo.QueryResult<IsFollowingQuery, IsFollowingQueryVariables>;
+export const FollowDocument = gql`
+    mutation Follow($followeeId: UUID!) {
+  createFollowing(input: {following: {followeeId: $followeeId}}) {
+    clientMutationId
+  }
+}
+    `;
+export type FollowMutationFn = Apollo.MutationFunction<FollowMutation, FollowMutationVariables>;
+
+/**
+ * __useFollowMutation__
+ *
+ * To run a mutation, you first call `useFollowMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useFollowMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [followMutation, { data, loading, error }] = useFollowMutation({
+ *   variables: {
+ *      followeeId: // value for 'followeeId'
+ *   },
+ * });
+ */
+export function useFollowMutation(baseOptions?: Apollo.MutationHookOptions<FollowMutation, FollowMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<FollowMutation, FollowMutationVariables>(FollowDocument, options);
+      }
+export type FollowMutationHookResult = ReturnType<typeof useFollowMutation>;
+export type FollowMutationResult = Apollo.MutationResult<FollowMutation>;
+export type FollowMutationOptions = Apollo.BaseMutationOptions<FollowMutation, FollowMutationVariables>;
+export const UnFollowDocument = gql`
+    mutation UnFollow($followeeId: UUID!, $followerId: UUID!) {
+  deleteFollowing(input: {followerId: $followerId, followeeId: $followeeId}) {
+    clientMutationId
+  }
+}
+    `;
+export type UnFollowMutationFn = Apollo.MutationFunction<UnFollowMutation, UnFollowMutationVariables>;
+
+/**
+ * __useUnFollowMutation__
+ *
+ * To run a mutation, you first call `useUnFollowMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnFollowMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unFollowMutation, { data, loading, error }] = useUnFollowMutation({
+ *   variables: {
+ *      followeeId: // value for 'followeeId'
+ *      followerId: // value for 'followerId'
+ *   },
+ * });
+ */
+export function useUnFollowMutation(baseOptions?: Apollo.MutationHookOptions<UnFollowMutation, UnFollowMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnFollowMutation, UnFollowMutationVariables>(UnFollowDocument, options);
+      }
+export type UnFollowMutationHookResult = ReturnType<typeof useUnFollowMutation>;
+export type UnFollowMutationResult = Apollo.MutationResult<UnFollowMutation>;
+export type UnFollowMutationOptions = Apollo.BaseMutationOptions<UnFollowMutation, UnFollowMutationVariables>;

@@ -1,0 +1,39 @@
+fragment PostFragment on Post {
+  id
+  text
+  author {
+    id
+    name
+    image
+  }
+  createdAt
+}
+
+query Posts {
+  posts(first: 50, orderBy: CREATED_AT_DESC) {
+    edges {
+      node {
+        ...PostFragment
+      }
+    }
+    totalCount
+  }
+}
+
+mutation CreatePost($text: String!) {
+  createPost(input: {post: {text: $text}}) {
+    postEdge {
+      node {
+        ...PostFragment
+      }
+    }
+  }
+}
+
+subscription NewPost {
+  listen(topic: "newPost") {
+    relatedNode {
+      ...PostFragment
+    }
+  }
+}

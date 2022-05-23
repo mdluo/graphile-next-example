@@ -1,0 +1,71 @@
+fragment FollowingFragment on User {
+  followers {
+    edges {
+      node {
+        id
+        name
+        image
+      }
+    }
+    totalCount
+  }
+  followees {
+    edges {
+      node {
+        id
+        name
+        image
+      }
+    }
+    totalCount
+  }
+}
+
+query GetUser($id: UUID!) {
+  user(id: $id) {
+    id
+    name
+    image
+    username
+    description
+    authoredPosts {
+      totalCount
+    }
+    followers {
+      totalCount
+    }
+    followees {
+      totalCount
+    }
+  }
+}
+
+query MyFollowings {
+  currentUser {
+    ...FollowingFragment
+  }
+}
+
+query UserFollowings($id: UUID!) {
+  user(id: $id) {
+    ...FollowingFragment
+  }
+}
+
+query IsFollowing($followeeId: UUID!, $followerId: UUID!) {
+  following(followeeId: $followeeId, followerId: $followerId) {
+    followeeId
+  }
+}
+
+mutation Follow($followeeId: UUID!) {
+  createFollowing(input: {following: {followeeId: $followeeId}}) {
+    clientMutationId
+  }
+}
+
+mutation UnFollow($followeeId: UUID!, $followerId: UUID!) {
+  deleteFollowing(input: {followerId: $followerId, followeeId: $followeeId}) {
+    clientMutationId
+  }
+}

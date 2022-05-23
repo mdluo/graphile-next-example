@@ -1,6 +1,7 @@
 import path from 'path';
 import { postgraphql, makePluginHook } from 'postgraphile';
 import PgSimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
+import PgManyToManyPlugin from '@graphile-contrib/pg-many-to-many';
 import ConnectionFilterPlugin from 'postgraphile-plugin-connection-filter';
 import PgPubsub from '@graphile/pg-pubsub';
 import { NodePlugin } from 'graphile-build';
@@ -45,10 +46,11 @@ const middleware = postgraphql(authPgPool, 'app_public', {
   appendPlugins: [
     RemoveQueryQueryPlugin,
     PgSimplifyInflectorPlugin,
+    PgManyToManyPlugin,
     PrimaryKeyMutationsOnlyPlugin,
     ConnectionFilterPlugin,
   ],
-  skipPlugins: [NodePlugin],
+  // skipPlugins: [NodePlugin],
   exportGqlSchemaPath: isDev
     ? path.resolve(__dirname, '../data/schema.graphql')
     : undefined,

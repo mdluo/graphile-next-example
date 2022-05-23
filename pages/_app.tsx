@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
 import NextApp from 'next/app';
-import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import {
   ApolloClient,
@@ -12,10 +10,6 @@ import { FocusStyleManager } from '@blueprintjs/core';
 import { withApollo } from 'libs/withApollo';
 
 import 'styles/globals.css';
-
-interface Props extends AppProps {
-  apollo: ApolloClient<NormalizedCacheObject>;
-}
 
 class App extends NextApp<{ apollo: ApolloClient<NormalizedCacheObject> }> {
   static async getInitialProps({ Component, ctx }: any) {
