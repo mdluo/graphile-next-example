@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { Button, Icon } from '@blueprintjs/core';
+import { Icon } from '@blueprintjs/core';
 import { Popover2 } from '@blueprintjs/popover2';
 
 import { formatTimeAgo, dtf } from 'libs/format';
@@ -22,6 +22,7 @@ const Post: React.FC<Props> = ({ user, post }) => {
         <div className="w-auto h-auto rounded-full">
           <Popover2
             className="rounded"
+            placement="right-start"
             content={
               <div className="py-6 px-3">
                 <Profile userId={post.author?.id} />

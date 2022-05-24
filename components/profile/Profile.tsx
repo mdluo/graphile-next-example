@@ -12,14 +12,20 @@ import {
 
 interface Props {
   userId: string;
+  followersCount?: number;
+  followingCount?: number;
 }
 
-const Profile: React.FC<Props> = ({ userId }) => {
+const Profile: React.FC<Props> = ({
+  userId,
+  followersCount,
+  followingCount,
+}) => {
   const session = useSession();
   const sessionUserId = session.data?.user?.id;
   const isMe = userId === sessionUserId;
 
-  const { data } = useGetUserQuery({ variables: { id: userId } });
+  const { data, refetch } = useGetUserQuery({ variables: { id: userId } });
   const { user } = data ?? {};
 
   const {
@@ -38,6 +44,7 @@ const Profile: React.FC<Props> = ({ userId }) => {
     variables: { followeeId: userId },
     refetchQueries: ['MyFollowings'],
     update: () => {
+      refetch();
       updateQuery(() => {
         return {
           following: {
@@ -52,6 +59,7 @@ const Profile: React.FC<Props> = ({ userId }) => {
     variables: { followerId: sessionUserId, followeeId: userId },
     refetchQueries: ['MyFollowings'],
     update: () => {
+      refetch();
       updateQuery(() => {
         return {
           following: {
@@ -90,16 +98,21 @@ const Profile: React.FC<Props> = ({ userId }) => {
           <span className="text-gray-400">Posts</span>
         </div>
         <div className="mx-4 font-semibold text-center">
-          <p className="text-black">{user.followers.totalCount}</p>
+          <p className="text-black">
+            {followersCount ?? user.followers.totalCount}
+          </p>
           <span className="text-gray-400">Followers</span>
         </div>
         <div className="mx-4 font-semibold text-center">
-          <p className="text-black">{user.followees.totalCount}</p>
+          <p className="text-black">
+            {followingCount ?? user.followees.totalCount}
+          </p>
           <span className="text-gray-400">Following</span>
         </div>
       </div>
       {!isMe && isFollowing !== null && (
         <Button
+          intent={isFollowing ? 'none' : 'primary'}
           loading={followLoading || unfollowLoading}
           onClick={() => {
             isFollowing ? unfollow() : follow();
