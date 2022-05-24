@@ -73,6 +73,14 @@ begin
     values
       (v_name, v_image)
     returning * into v_user;
+
+    insert into app_public.accounts
+      (user_id, provider, provider_account_id, account_details)
+    values
+      (v_user.id, f_provider, f_provider_account_id, f_account_details)
+    returning
+      id, user_id into v_matched_account_id, v_matched_user_id;
+
     return v_user;
   else
     if v_matched_account_id is not null then
