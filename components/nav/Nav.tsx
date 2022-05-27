@@ -51,14 +51,10 @@ const Nav: React.FC = () => {
                 >
                   <button
                     type="button"
-                    className="inline-flex relative items-center px-2 rounded-full border hover:shadow-lg"
+                    className="flex gap-5 justify-between items-center py-2 px-3 rounded-full border hover:shadow-lg"
                   >
-                    <div className="pl-1">
-                      <Icon icon="menu" />
-                    </div>
-                    <div className="block grow-0 shrink-0 pl-5 w-12 h-10">
-                      <Icon icon="user" className="h-full" size={24} />
-                    </div>
+                    <Icon icon="menu" />
+                    <Icon icon="user" className="h-full" size={24} />
                   </button>
                 </Popover2>
               </div>

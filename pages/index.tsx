@@ -12,12 +12,12 @@ import {
 } from 'graphql/generated';
 
 const Index: React.FC = () => {
-  const session = useSession({
+  useSession({
     required: true,
     onUnauthenticated: signIn,
   });
 
-  const { loading, error, data, updateQuery } = usePostsQuery();
+  const { data, updateQuery } = usePostsQuery();
 
   useNewPostSubscription({
     onSubscriptionData: ({ subscriptionData }) => {
@@ -58,20 +58,16 @@ const Index: React.FC = () => {
     [createPostMutation, updateQuery],
   );
 
-  if (!session || session.status === 'loading' || loading || error) {
-    return null;
-  }
-
   return (
     <>
       <style>{`button { border: none; cursor: pointer; }`}</style>
       <Nav />
       <div className="container grid grid-cols-1 gap-6 py-6 px-2 mx-auto lg:grid-cols-3">
-        <Aside user={session.data.user} />
+        <Aside />
         <main className="col-span-2">
           <Composer onSubmit={onSubmit} />
           {data?.posts?.edges?.map(({ node }) => (
-            <Post key={node.id} user={session.data.user} post={node} />
+            <Post key={node.id} post={node} />
           ))}
         </main>
       </div>

@@ -1,28 +1,35 @@
 import React from 'react';
 import Image from 'next/image';
 
-import { User, useMyFollowingsQuery } from 'graphql/generated';
+import useCurrentUser from 'hooks/useCurrentUser';
+import { useMyFollowingsQuery } from 'graphql/generated';
 import Profile from 'components/profile';
 
-interface Props {
-  user: User;
-}
+const Aside: React.FC = () => {
+  const currentUser = useCurrentUser();
 
-const Aside: React.FC<Props> = ({ user }) => {
-  const { data } = useMyFollowingsQuery();
+  const myFollowingsQuery = useMyFollowingsQuery({
+    nextFetchPolicy: 'cache-only',
+  });
+  const myFollowings = myFollowingsQuery.data?.currentUser;
+
+  if (!currentUser || !myFollowings) {
+    return null;
+  }
+
   return (
     <aside className="">
       <div className="py-8 px-6 bg-white rounded-lg shadow">
         <Profile
-          userId={user.id}
-          followersCount={data?.currentUser?.followers.totalCount}
-          followingCount={data?.currentUser?.followees.totalCount}
+          userId={currentUser.id}
+          followersCount={myFollowings.followers.totalCount}
+          followingCount={myFollowings.followees.totalCount}
         />
       </div>
       <div className="py-4 px-6 mt-6 bg-white rounded-lg shadow">
         <h3 className="mb-4 text-sm font-semibold text-gray-600">Following</h3>
         <ul className="grid grid-cols-5 gap-2 p-0">
-          {data?.currentUser?.followees.edges.map(({ node }) => (
+          {myFollowings.followees.edges.map(({ node }) => (
             <li key={node.id} className="flex flex-col items-center">
               <a className="block p-1 bg-white rounded-full" href="#">
                 <Image

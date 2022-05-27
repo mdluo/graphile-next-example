@@ -1067,19 +1067,26 @@ export type NewPostSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 export type NewPostSubscription = { __typename?: 'Subscription', listen: { __typename?: 'ListenPayload', relatedNode?: { __typename?: 'Account' } | { __typename?: 'Following' } | { __typename?: 'Post', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } | { __typename?: 'Query' } | { __typename?: 'User' } | null } };
 
+export type UserFragmentFragment = { __typename?: 'User', id: any, name?: string | null, image?: string | null, username?: string | null, description?: string | null, authoredPosts: { __typename?: 'PostsConnection', totalCount: number }, followers: { __typename?: 'UserFollowersManyToManyConnection', totalCount: number }, followees: { __typename?: 'UserFolloweesManyToManyConnection', totalCount: number } };
+
 export type FollowingFragmentFragment = { __typename?: 'User', followers: { __typename?: 'UserFollowersManyToManyConnection', totalCount: number, edges: Array<{ __typename?: 'UserFollowersManyToManyEdge', node: { __typename?: 'User', id: any, name?: string | null, image?: string | null } }> }, followees: { __typename?: 'UserFolloweesManyToManyConnection', totalCount: number, edges: Array<{ __typename?: 'UserFolloweesManyToManyEdge', node: { __typename?: 'User', id: any, name?: string | null, image?: string | null } }> } };
 
-export type GetUserQueryVariables = Exact<{
-  id: Scalars['UUID'];
-}>;
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: any, name?: string | null, image?: string | null, username?: string | null, description?: string | null, authoredPosts: { __typename?: 'PostsConnection', totalCount: number }, followers: { __typename?: 'UserFollowersManyToManyConnection', totalCount: number }, followees: { __typename?: 'UserFolloweesManyToManyConnection', totalCount: number } } | null };
+export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: any, name?: string | null, image?: string | null, username?: string | null, description?: string | null, authoredPosts: { __typename?: 'PostsConnection', totalCount: number }, followers: { __typename?: 'UserFollowersManyToManyConnection', totalCount: number }, followees: { __typename?: 'UserFolloweesManyToManyConnection', totalCount: number } } | null };
 
 export type MyFollowingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MyFollowingsQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', followers: { __typename?: 'UserFollowersManyToManyConnection', totalCount: number, edges: Array<{ __typename?: 'UserFollowersManyToManyEdge', node: { __typename?: 'User', id: any, name?: string | null, image?: string | null } }> }, followees: { __typename?: 'UserFolloweesManyToManyConnection', totalCount: number, edges: Array<{ __typename?: 'UserFolloweesManyToManyEdge', node: { __typename?: 'User', id: any, name?: string | null, image?: string | null } }> } } | null };
+
+export type UserQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: any, name?: string | null, image?: string | null, username?: string | null, description?: string | null, authoredPosts: { __typename?: 'PostsConnection', totalCount: number }, followers: { __typename?: 'UserFollowersManyToManyConnection', totalCount: number }, followees: { __typename?: 'UserFolloweesManyToManyConnection', totalCount: number } } | null };
 
 export type UserFollowingsQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -1121,6 +1128,24 @@ export const PostFragmentFragmentDoc = gql`
     image
   }
   createdAt
+}
+    `;
+export const UserFragmentFragmentDoc = gql`
+    fragment UserFragment on User {
+  id
+  name
+  image
+  username
+  description
+  authoredPosts {
+    totalCount
+  }
+  followers {
+    totalCount
+  }
+  followees {
+    totalCount
+  }
 }
     `;
 export const FollowingFragmentFragmentDoc = gql`
@@ -1254,54 +1279,40 @@ export function useNewPostSubscription(baseOptions?: Apollo.SubscriptionHookOpti
       }
 export type NewPostSubscriptionHookResult = ReturnType<typeof useNewPostSubscription>;
 export type NewPostSubscriptionResult = Apollo.SubscriptionResult<NewPostSubscription>;
-export const GetUserDocument = gql`
-    query GetUser($id: UUID!) {
-  user(id: $id) {
-    id
-    name
-    image
-    username
-    description
-    authoredPosts {
-      totalCount
-    }
-    followers {
-      totalCount
-    }
-    followees {
-      totalCount
-    }
+export const CurrentUserDocument = gql`
+    query CurrentUser {
+  currentUser {
+    ...UserFragment
   }
 }
-    `;
+    ${UserFragmentFragmentDoc}`;
 
 /**
- * __useGetUserQuery__
+ * __useCurrentUserQuery__
  *
- * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCurrentUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCurrentUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetUserQuery({
+ * const { data, loading, error } = useCurrentUserQuery({
  *   variables: {
- *      id: // value for 'id'
  *   },
  * });
  */
-export function useGetUserQuery(baseOptions: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+export function useCurrentUserQuery(baseOptions?: Apollo.QueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+        return Apollo.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
       }
-export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+          return Apollo.useLazyQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
         }
-export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
-export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
-export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
+export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
+export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
 export const MyFollowingsDocument = gql`
     query MyFollowings {
   currentUser {
@@ -1336,6 +1347,41 @@ export function useMyFollowingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type MyFollowingsQueryHookResult = ReturnType<typeof useMyFollowingsQuery>;
 export type MyFollowingsLazyQueryHookResult = ReturnType<typeof useMyFollowingsLazyQuery>;
 export type MyFollowingsQueryResult = Apollo.QueryResult<MyFollowingsQuery, MyFollowingsQueryVariables>;
+export const UserDocument = gql`
+    query User($id: UUID!) {
+  user(id: $id) {
+    ...UserFragment
+  }
+}
+    ${UserFragmentFragmentDoc}`;
+
+/**
+ * __useUserQuery__
+ *
+ * To run a query within a React component, call `useUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUserQuery(baseOptions: Apollo.QueryHookOptions<UserQuery, UserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+      }
+export function useUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserQuery, UserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+        }
+export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
+export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
+export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
 export const UserFollowingsDocument = gql`
     query UserFollowings($id: UUID!) {
   user(id: $id) {

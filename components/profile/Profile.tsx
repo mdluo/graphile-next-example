@@ -1,10 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
 import { Icon, Button } from '@blueprintjs/core';
 
+import useCurrentUser from 'hooks/useCurrentUser';
 import {
-  useGetUserQuery,
+  useCurrentUserQuery,
+  useUserQuery,
   useIsFollowingQuery,
   useFollowMutation,
   useUnFollowMutation,
@@ -21,19 +22,20 @@ const Profile: React.FC<Props> = ({
   followersCount,
   followingCount,
 }) => {
-  const session = useSession();
-  const sessionUserId = session.data?.user?.id;
-  const isMe = userId === sessionUserId;
+  const currentUser = useCurrentUser();
+  const myUserId = currentUser?.id;
 
-  const { data, refetch } = useGetUserQuery({ variables: { id: userId } });
-  const { user } = data ?? {};
+  const isMe = userId === myUserId;
+
+  const userQuery = useUserQuery({ variables: { id: userId }, skip: isMe });
+  const user = isMe ? currentUser : userQuery.data?.user;
 
   const {
     data: isFollowingData,
     loading: isFollowingLoading,
     updateQuery,
   } = useIsFollowingQuery({
-    variables: { followerId: sessionUserId, followeeId: userId },
+    variables: { followerId: myUserId, followeeId: userId },
     skip: isMe,
   });
   const isFollowing = isFollowingLoading
@@ -44,7 +46,6 @@ const Profile: React.FC<Props> = ({
     variables: { followeeId: userId },
     refetchQueries: ['MyFollowings'],
     update: () => {
-      refetch();
       updateQuery(() => {
         return {
           following: {
@@ -56,10 +57,9 @@ const Profile: React.FC<Props> = ({
   });
 
   const [unfollow, { loading: unfollowLoading }] = useUnFollowMutation({
-    variables: { followerId: sessionUserId, followeeId: userId },
+    variables: { followerId: myUserId, followeeId: userId },
     refetchQueries: ['MyFollowings'],
     update: () => {
-      refetch();
       updateQuery(() => {
         return {
           following: {
@@ -70,7 +70,7 @@ const Profile: React.FC<Props> = ({
     },
   });
 
-  if (!session.data || !user) {
+  if (!currentUser || !user) {
     return null;
   }
 

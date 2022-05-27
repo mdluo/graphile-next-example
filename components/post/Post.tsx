@@ -3,19 +3,22 @@ import Image from 'next/image';
 import { Icon } from '@blueprintjs/core';
 import { Popover2 } from '@blueprintjs/popover2';
 
+import useCurrentUser from 'hooks/useCurrentUser';
 import { formatTimeAgo, dtf } from 'libs/format';
 import Profile from 'components/profile';
-import { Post, User, Node } from 'graphql/generated';
+import { Post, Node } from 'graphql/generated';
 
 interface Props {
-  user: User;
   post: Post & Node;
 }
 
-const Post: React.FC<Props> = ({ user, post }) => {
-  if (!user || !post) {
+const Post: React.FC<Props> = ({ post }) => {
+  const currentUser = useCurrentUser();
+
+  if (!currentUser || !post) {
     return null;
   }
+
   return (
     <article className="mb-6 bg-white rounded-lg shadow">
       <div className="flex flex-row py-3 px-2 mx-3">
@@ -78,7 +81,7 @@ const Post: React.FC<Props> = ({ user, post }) => {
           className="object-cover mr-2 w-10 h-10 rounded-full shadow cursor-pointer"
           width={40}
           height={40}
-          src={user.image ?? ''}
+          src={currentUser.image ?? ''}
           alt="User avatar"
         />
         <span className="flex absolute inset-y-0 right-0 items-center pr-6">

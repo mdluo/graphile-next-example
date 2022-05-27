@@ -1,3 +1,20 @@
+fragment UserFragment on User {
+  id
+  name
+  image
+  username
+  description
+  authoredPosts {
+    totalCount
+  }
+  followers {
+    totalCount
+  }
+  followees {
+    totalCount
+  }
+}
+
 fragment FollowingFragment on User {
   followers {
     edges {
@@ -21,28 +38,21 @@ fragment FollowingFragment on User {
   }
 }
 
-query GetUser($id: UUID!) {
-  user(id: $id) {
-    id
-    name
-    image
-    username
-    description
-    authoredPosts {
-      totalCount
-    }
-    followers {
-      totalCount
-    }
-    followees {
-      totalCount
-    }
+query CurrentUser {
+  currentUser {
+    ...UserFragment
   }
 }
 
 query MyFollowings {
   currentUser {
     ...FollowingFragment
+  }
+}
+
+query User($id: UUID!) {
+  user(id: $id) {
+    ...UserFragment
   }
 }
 
@@ -59,13 +69,13 @@ query IsFollowing($followeeId: UUID!, $followerId: UUID!) {
 }
 
 mutation Follow($followeeId: UUID!) {
-  createFollowing(input: {following: {followeeId: $followeeId}}) {
+  createFollowing(input: { following: { followeeId: $followeeId } }) {
     clientMutationId
   }
 }
 
 mutation UnFollow($followeeId: UUID!, $followerId: UUID!) {
-  deleteFollowing(input: {followerId: $followerId, followeeId: $followeeId}) {
+  deleteFollowing(input: { followerId: $followerId, followeeId: $followeeId }) {
     clientMutationId
   }
 }

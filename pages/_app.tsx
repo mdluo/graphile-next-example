@@ -8,6 +8,7 @@ import {
 import { FocusStyleManager } from '@blueprintjs/core';
 
 import { withApollo } from 'libs/withApollo';
+import { UserContextProvider } from 'hooks/useCurrentUser';
 
 import 'styles/globals.css';
 
@@ -30,7 +31,9 @@ class App extends NextApp<{ apollo: ApolloClient<NormalizedCacheObject> }> {
     return (
       <SessionProvider session={pageProps.session}>
         <ApolloProvider client={apollo}>
-          <Component {...pageProps} />
+          <UserContextProvider>
+            <Component {...pageProps} />
+          </UserContextProvider>
         </ApolloProvider>
       </SessionProvider>
     );

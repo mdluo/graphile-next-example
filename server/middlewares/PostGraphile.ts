@@ -8,6 +8,8 @@ import { NodePlugin } from 'graphile-build';
 import { decode } from 'next-auth/jwt';
 import cookie from 'cookie';
 
+import { JWT } from 'pages/api/auth/[...nextauth]';
+
 import RemoveQueryQueryPlugin from '../plugins/RemoveQueryQueryPlugin';
 import PrimaryKeyMutationsOnlyPlugin from '../plugins/PrimaryKeyMutationsOnlyPlugin';
 
@@ -61,11 +63,11 @@ const middleware = postgraphql(authPgPool, 'app_public', {
   legacyRelations: 'omit',
   pgSettings: async (req) => {
     const cookies = cookie.parse(req.headers.cookie || '');
-    const payload = await decode({
+    const jwt = await decode({
       token: cookies['next-auth.session-token'],
       secret: process.env.NEXTAUTH_SECRET || '',
     });
-    const userId = (payload as { user: { id: string } })?.user?.id ?? '';
+    const { userId } = jwt as JWT;
     return {
       // Everyone uses the "visitor" role currently
       role: DB_VISITOR,
