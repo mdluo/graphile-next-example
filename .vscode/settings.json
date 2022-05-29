@@ -5,5 +5,6 @@
     "graphiql",
     "NEXTAUTH",
     "postgraphql"
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
