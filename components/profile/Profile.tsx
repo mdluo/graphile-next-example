@@ -4,7 +4,6 @@ import { Icon, Button } from '@blueprintjs/core';
 
 import useCurrentUser from 'hooks/useCurrentUser';
 import {
-  useCurrentUserQuery,
   useUserQuery,
   useIsFollowingQuery,
   useFollowMutation,
@@ -33,7 +32,7 @@ const Profile: React.FC<Props> = ({
   const {
     data: isFollowingData,
     loading: isFollowingLoading,
-    updateQuery,
+    updateQuery: updateIsFollowingQuery,
   } = useIsFollowingQuery({
     variables: { followerId: myUserId, followeeId: userId },
     skip: isMe,
@@ -46,13 +45,11 @@ const Profile: React.FC<Props> = ({
     variables: { followeeId: userId },
     refetchQueries: ['MyFollowings'],
     update: () => {
-      updateQuery(() => {
-        return {
-          following: {
-            followeeId: userId,
-          },
-        };
-      });
+      updateIsFollowingQuery(() => ({
+        following: {
+          followeeId: userId,
+        },
+      }));
     },
   });
 
@@ -60,13 +57,9 @@ const Profile: React.FC<Props> = ({
     variables: { followerId: myUserId, followeeId: userId },
     refetchQueries: ['MyFollowings'],
     update: () => {
-      updateQuery(() => {
-        return {
-          following: {
-            followeeId: null,
-          },
-        };
-      });
+      updateIsFollowingQuery(() => ({
+        following: null,
+      }));
     },
   });
 

@@ -1050,17 +1050,20 @@ export enum UsersOrderBy {
 
 export type PostFragmentFragment = { __typename?: 'Post', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null };
 
-export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PostsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+}>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts?: { __typename?: 'PostsConnection', totalCount: number, edges: Array<{ __typename?: 'PostsEdge', node: { __typename?: 'Post', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } }> } | null };
+export type PostsQuery = { __typename?: 'Query', posts?: { __typename?: 'PostsConnection', totalCount: number, edges: Array<{ __typename?: 'PostsEdge', node: { __typename?: 'Post', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: any | null } } | null };
 
 export type CreatePostMutationVariables = Exact<{
   text: Scalars['String'];
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost?: { __typename?: 'CreatePostPayload', postEdge?: { __typename?: 'PostsEdge', node: { __typename?: 'Post', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } } | null } | null };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost?: { __typename?: 'CreatePostPayload', post?: { __typename?: 'Post', id: any, text: string, createdAt: any, author?: { __typename?: 'User', id: any, name?: string | null, image?: string | null } | null } | null } | null };
 
 export type NewPostSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -1173,14 +1176,18 @@ export const FollowingFragmentFragmentDoc = gql`
 }
     `;
 export const PostsDocument = gql`
-    query Posts {
-  posts(first: 50, orderBy: CREATED_AT_DESC) {
+    query Posts($first: Int = 50, $after: Cursor) {
+  posts(first: $first, after: $after, orderBy: CREATED_AT_DESC) {
     edges {
       node {
         ...PostFragment
       }
     }
     totalCount
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
   }
 }
     ${PostFragmentFragmentDoc}`;
@@ -1197,6 +1204,8 @@ export const PostsDocument = gql`
  * @example
  * const { data, loading, error } = usePostsQuery({
  *   variables: {
+ *      first: // value for 'first'
+ *      after: // value for 'after'
  *   },
  * });
  */
@@ -1214,10 +1223,8 @@ export type PostsQueryResult = Apollo.QueryResult<PostsQuery, PostsQueryVariable
 export const CreatePostDocument = gql`
     mutation CreatePost($text: String!) {
   createPost(input: {post: {text: $text}}) {
-    postEdge {
-      node {
-        ...PostFragment
-      }
+    post {
+      ...PostFragment
     }
   }
 }

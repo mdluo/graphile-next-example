@@ -9,23 +9,25 @@ fragment PostFragment on Post {
   createdAt
 }
 
-query Posts {
-  posts(first: 50, orderBy: CREATED_AT_DESC) {
+query Posts($first: Int = 50, $after: Cursor) {
+  posts(first: $first, after: $after, orderBy: CREATED_AT_DESC) {
     edges {
       node {
         ...PostFragment
       }
     }
     totalCount
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
   }
 }
 
 mutation CreatePost($text: String!) {
   createPost(input: {post: {text: $text}}) {
-    postEdge {
-      node {
-        ...PostFragment
-      }
+    post {
+      ...PostFragment
     }
   }
 }

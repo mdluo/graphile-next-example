@@ -6,10 +6,10 @@ import { Popover2 } from '@blueprintjs/popover2';
 import useCurrentUser from 'hooks/useCurrentUser';
 import { formatTimeAgo, dtf } from 'libs/format';
 import Profile from 'components/profile';
-import { Post, Node } from 'graphql/generated';
+import { PostsQuery } from 'graphql/generated';
 
 interface Props {
-  post: Post & Node;
+  post: NonNullable<PostsQuery['posts']>['edges'][number]['node'];
 }
 
 const Post: React.FC<Props> = ({ post }) => {

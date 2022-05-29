@@ -10,6 +10,7 @@ import {
 } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { getDataFromTree } from '@apollo/client/react/ssr';
+import { relayStylePagination } from '@apollo/client/utilities';
 import { getOperationAST, GraphQLError, print } from 'graphql';
 import { Client, createClient } from 'graphql-ws';
 import withApolloBase from 'next-with-apollo';
@@ -139,6 +140,9 @@ export const withApollo = withApolloBase(
         typePolicies: {
           Query: {
             queryType: true,
+            fields: {
+              posts: relayStylePagination(),
+            },
           },
         },
       }).restore(initialState || {}),

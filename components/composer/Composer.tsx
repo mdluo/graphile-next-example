@@ -1,11 +1,10 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import { Button, Icon } from '@blueprintjs/core';
+import { merge } from 'lodash';
 
-interface Props {
-  onSubmit: (text: string) => Promise<void>;
-}
+import { usePostsQuery, useCreatePostMutation } from 'graphql/generated';
 
-const Composer: React.FC<Props> = ({ onSubmit }) => {
+const Composer: React.FC = () => {
   const textarea = useRef<HTMLTextAreaElement>(null);
 
   const [submitting, setSubmitting] = useState(false);
@@ -34,12 +33,34 @@ const Composer: React.FC<Props> = ({ onSubmit }) => {
     }
   }, []);
 
-  useEffect(() => {
-    fileInput.current?.addEventListener('change', onChange);
-    return () => {
-      fileInput.current?.removeEventListener('change', onChange);
-    };
-  }, [onChange]);
+  const { updateQuery } = usePostsQuery({ skip: true });
+  const [createPostMutation] = useCreatePostMutation();
+
+  const onSubmit = useCallback(
+    async (text: string) => {
+      await createPostMutation({
+        variables: { text },
+        update: (cache, { data }) => {
+          updateQuery((prev) => {
+            const newPost = data?.createPost?.post;
+            if (!newPost) {
+              return prev;
+            }
+            if (prev.posts?.edges.find((edge) => edge.node.id === newPost.id)) {
+              return prev;
+            }
+            return merge({}, prev, {
+              posts: {
+                totalCount: prev.posts?.totalCount ?? 0 + 1,
+                edges: [{ node: newPost }, ...(prev.posts?.edges ?? [])],
+              },
+            });
+          });
+        },
+      });
+    },
+    [createPostMutation, updateQuery],
+  );
 
   return (
     <form
@@ -70,7 +91,13 @@ const Composer: React.FC<Props> = ({ onSubmit }) => {
               fileInput.current?.click();
             }}
           >
-            <input ref={fileInput} type="file" accept="image/*" hidden></input>
+            <input
+              onChange={onChange}
+              ref={fileInput}
+              type="file"
+              accept="image/*"
+              hidden
+            ></input>
             <Icon icon="media" />
           </span>
           <span className="flex items-center px-2 w-8 h-8 text-blue-400 hover:text-white bg-blue-100 hover:bg-blue-500 rounded-full transition duration-300 ease-out cursor-pointer">
