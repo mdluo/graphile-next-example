@@ -8,7 +8,7 @@
     "db:migrate": "npm run gm watch",
     "db:commit": "npm run gm commit",
     "codegen": "graphql-codegen --config codegen.yml --watch",
-    "dev": "ts-node -r dotenv/config server/index.ts",
+    "dev": "NODE_ENV=development ts-node -r dotenv/config server/index.ts",
     "build": "swc server -d dist/ && next build",
     "start": "NODE_ENV=production node -r dotenv/config dist/index",
     "test": "jest"

@@ -63,8 +63,12 @@ const middleware = postgraphql(authPgPool, 'app_public', {
   legacyRelations: 'omit',
   pgSettings: async (req) => {
     const cookies = cookie.parse(req.headers.cookie || '');
+    // https://next-auth.js.org/configuration/options#usesecurecookies
+    const cookiePrefix = process.env.NEXTAUTH_URL?.startsWith('https')
+      ? '__Secure-'
+      : '';
     const jwt = await decode({
-      token: cookies['next-auth.session-token'],
+      token: cookies[`${cookiePrefix}next-auth.session-token`],
       secret: process.env.NEXTAUTH_SECRET || '',
     });
     const { userId } = jwt as JWT;
