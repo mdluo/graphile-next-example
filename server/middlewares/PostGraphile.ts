@@ -4,7 +4,7 @@ import PgSimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
 import PgManyToManyPlugin from '@graphile-contrib/pg-many-to-many';
 import ConnectionFilterPlugin from 'postgraphile-plugin-connection-filter';
 import PgPubsub from '@graphile/pg-pubsub';
-import { NodePlugin } from 'graphile-build';
+// import { NodePlugin } from 'graphile-build';
 import { decode } from 'next-auth/jwt';
 import cookie from 'cookie';
 

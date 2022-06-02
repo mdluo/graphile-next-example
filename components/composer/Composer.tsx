@@ -40,7 +40,7 @@ const Composer: React.FC = () => {
     async (text: string) => {
       await createPostMutation({
         variables: { text },
-        update: (cache, { data }) => {
+        update: (_cache, { data }) => {
           updateQuery((prev) => {
             const newPost = data?.createPost?.post;
             if (!newPost) {
