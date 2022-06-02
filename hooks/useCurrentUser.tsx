@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext } from 'react';
+import React, { ReactNode, useContext, useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { User, useCurrentUserQuery } from 'graphql/generated';
 
@@ -7,7 +7,7 @@ export const UserContext = React.createContext<User>({} as User);
 export const UserContextProvider: React.FC<{ children?: ReactNode }> = ({
   children,
 }) => {
-  useSession({
+  const { data: session } = useSession({
     required: true,
     onUnauthenticated: signIn,
   });
@@ -15,6 +15,12 @@ export const UserContextProvider: React.FC<{ children?: ReactNode }> = ({
   const currentUserQuery = useCurrentUserQuery();
 
   const currentUser = currentUserQuery.data?.currentUser;
+
+  useEffect(() => {
+    if (session && !currentUserQuery.loading && !currentUser) {
+      signIn();
+    }
+  }, [currentUser, currentUserQuery.loading, session]);
 
   if (!currentUser) {
     return null;

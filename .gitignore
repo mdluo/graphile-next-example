@@ -105,4 +105,7 @@ dist
 
 .DS_Store
 
+.env.*
+!.env.example
+
 server/**/*.js

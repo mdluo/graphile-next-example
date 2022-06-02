@@ -6,4 +6,7 @@ module.exports = {
       'images.unsplash.com',
     ],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
