@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json.schemastore.org/swcrc",
+  "exclude": [".*.js$", ".*.map$"],
+  "jsc": {
+    "parser": {
+      "syntax": "typescript"
+    }
+  },
+  "module": {
+    "type": "commonjs"
+  }
+}
