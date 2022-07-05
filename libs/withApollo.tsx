@@ -60,7 +60,7 @@ class WebSocketLink extends ApolloLink {
 
 function createWsClient() {
   return createClient({
-    url: 'ws://localhost:3000/graphql',
+    url: process.env.NEXT_PUBLIC_WS_URL ?? 'ws://localhost:3000/graphql',
   });
 }
 
