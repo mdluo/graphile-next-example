@@ -2,12 +2,11 @@ version: '3'
 
 services:
   postgres:
-    container_name: postgres
-    image: supabase/postgres:14.1.0.21
+    image: supabase/postgres:14.1.0.66
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-    command: postgres -c config_file=/etc/postgresql/postgresql.conf 
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     ports:
       - 5432:5432
     networks:
@@ -15,7 +14,7 @@ services:
     restart: unless-stopped
 
   pgadmin:
-    image: dpage/pgadmin4:6.9
+    image: dpage/pgadmin4:6.13
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
